@@ -1,60 +1,84 @@
 import { useFrame, useLoader } from "@react-three/fiber"
-import { useRef, RefObject, useState, useMemo, useEffect } from "react"
+import { useRef, RefObject, useState } from "react"
 import { Mesh } from "three"
 import * as THREE from "three"
 import { makeCube } from "./Utils"
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
+import {Line} from "@react-three/drei";
+import { useGLTF, MeshTransmissionMaterial } from '@react-three/drei'
+import { useBox } from "@react-three/cannon";
+import {VaseProps} from "./types"
+import {Stats, OrbitControls, PerspectiveCamera, Billboard, Text, Html} from "@react-three/drei"
 
-type VaseProps = {
-    position: [number, number, number]
+function Asset(props: {url: string, position: [number, number, number]}) {
+    const obj = useLoader(OBJLoader, props.url)
+    obj.scale.set(0.05, 0.05, 0.05)
+    obj.rotation.set(-Math.PI/2, 0, 0)
+    obj.position.set(props.position[0], props.position[1], props.position[2])
+    return <primitive object={obj.clone()}></primitive>
+}
+
+function Outline(props:{size: number, position: [number, number, number]}){
+    const points = makeCube(props.size + 0.01)
+    return <Line
+        points={points}
+        position={[props.position[0] - props.size/2, props.position[1] - props.size/2, props.position[2] - props.size/2]}
+        color={"#444"}
+        lineWidth={1}
+    />
 }
 
 const Vase = (props: VaseProps)=>{
-    const ref:RefObject<Mesh> = useRef<Mesh>() as RefObject<Mesh>
-
-    const bG:RefObject<THREE.BufferGeometry> = useRef<THREE.BufferGeometry>() as RefObject<THREE.BufferGeometry>
     
-    const [rotate] = useState(false)
+    const api = useBox(() => ({
+        type: "Static",
+        args: [size, size, size],
+        position: props.position
+    }))
 
-    useFrame(()=>{
-        if(ref && ref.current && rotate){
-           ref.current.rotation.x += 0.01
+    const ref:RefObject<Mesh> = api[0] as RefObject<Mesh>
+
+    const size = 2
+
+    const hdrEquirect = new RGBELoader().load(
+        "assets/empty_warehouse_01_2k.hdr",
+        () => {
+            hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
         }
-    })
-
-    useEffect(()=>{
-        console.log("sfp")
-        const points = makeCube(5.01)
-        bG.current?.setFromPoints(points)
-    })
-
-    const obj = useLoader(OBJLoader, '/assets/Got_lq.obj')
-    obj.scale.set(0.05, 0.05, 0.05)
-    obj.rotation.set(-Math.PI/2, 0, 0)
-
+    );
+    
     return (
         <group>
-            <mesh position = {props.position} ref={ref}>
-                <boxGeometry args={[2, 2, 2]}></boxGeometry>
-                <meshPhysicalMaterial
+           <mesh ref={ref}>
+                <boxGeometry args={[size, size, size]}></boxGeometry>
+                <MeshTransmissionMaterial
+                    envMap = {hdrEquirect}
                     roughness={0.1}
                     transmission={0.85}
-                    thickness={0.1}
+                    thickness={0.05}
                     reflectivity={0.2}
                     metalness={0.1}
-                    clearcoat={0}
+                    clearcoat={1}
                     clearcoatRoughness={0.5}
                     opacity={0.5}
                     transparent={true}
+                    chromaticAberration={0.06}
+                    distortion={0}
+                    distortionScale={0.3}
+                    temporalDistortion={0.5}
+                    anisotropy={0.1}
+                    attenuationDistance={0.5}
+                    attenuationColor={'#ffffff'}
+                    color={'#ccc'}
                 />
             </mesh>
-            <mesh>
-                <bufferGeometry ref={bG}></bufferGeometry>
-                <lineBasicMaterial color={0x222222} opacity={0.6}></lineBasicMaterial>
-            </mesh>
-            <primitive object={obj}></primitive>
+
+            <Asset url="/assets/Got_lq.obj" position={props.position}/>
+
+            <Outline size={2} position={props.position}/>
+
         </group>
-        
     )
 }
 export default Vase;
