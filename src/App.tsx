@@ -30,7 +30,7 @@ function App() {
     const floor = getFloor()
 
     const vases = getVases().map((position:Position, i:number) => {
-        return <Vase key={i} position={position} />
+        return <Vase key={i} position={position} size={4}/>
     })
 
     const ui = getVases().map((position:Position, i:number) => {
@@ -70,64 +70,88 @@ function App() {
     })
    
     return (
-        <div id="canvas-container">
-            <Canvas shadows>
+        <div>
+            <div id="canvas-container2">
+                <Canvas shadows>
 
-                <PerspectiveCamera
-                    makeDefault
-                    fov={50}
-                    position={[0, 0, 80]}
-                />
-                <Physics gravity={[0, -200, 0]}>
-                    <Debug color="rgb(255,0,0)" scale={1.25}>
+                    <PerspectiveCamera
+                        makeDefault
+                        fov={50}
+                        position={[0, 0, 80]}
+                    />
+
+                    <ambientLight color={'#666'} intensity={1}/>
+
+                    <Physics gravity={[0, -200, 0]}>
+                        <Vase position={[0, 0, 0]} size={4}/>
+                    </Physics>
+
+                    <OrbitControls/>
+
+
+                </Canvas>
+
+            </div>
+            <div id="canvas-container">
+                <Canvas shadows>
+
+                    <PerspectiveCamera
+                        makeDefault
+                        fov={50}
+                        position={[0, 0, 80]}
+                    />
+                    <Physics gravity={[0, -200, 0]}>
+                        <Debug color="rgb(255,0,0)" scale={0}>
+                            <>
+                                {vases}
+                            </>
+
+                            <StainedGlass position={[5, 5, 5]}></StainedGlass>
+                            <Building walls={walls}></Building>
+                            <Floor floor={floor}></Floor>
+                            <Player position={[0, 3, 0]} attachCamera={false}></Player>
+                        </Debug>
+                    </Physics>
+
+                    
                         <>
-                            {vases}
+                            {ui}
                         </>
+    
+                    <ambientLight color={'#666'} intensity={1}/>
+                    
+                    <pointLight args={['#fff', 0.5]} position={[10, 10, 10]} />
 
-                        <StainedGlass position={[5, 5, 5]}></StainedGlass>
-                        <Building walls={walls}></Building>
-                        <Floor floor={floor}></Floor>
-                        <Player position={[0, 3, 0]} attachCamera={false}></Player>
-                    </Debug>
-                </Physics>
+                    <rectAreaLight
+                        width={6}
+                        height={2}
+                        color={'#fc7'}
+                        intensity={2}
+                        position={[5, 8, 8]}
 
-                 
-                    <>
-                        {ui}
-                    </>
- 
-                <ambientLight color={'#666'} intensity={1}/>
-                <pointLight args={['#fff', 0.5]} position={[10, 10, 10]} />
+                    />
 
-                <rectAreaLight
-                    width={6}
-                    height={2}
-                    color={'#fc7'}
-                    intensity={2}
-                    position={[5, 8, 8]}
-
-                />
-
-                <pointLight
-                    position={[15, 25, 5]}
-                    intensity={0.6}                    
-                />
+                    <pointLight
+                        position={[15, 25, 5]}
+                        intensity={0.6}                    
+                    />
 
 
-                <directionalLight
-                    args={['#fff', 0.5]}
-                    position={[0, 0, 1]}
-                />
-                
-                <Stats/>
-                
-                <OrbitControls/>
-                
-                <SkyBox />
-                
-                <axesHelper args={[5]} />
+                    <directionalLight
+                        args={['#fff', 0.5]}
+                        position={[0, 0, 1]}
+                    />
+                    
+                    <Stats/>
+                    
+                    <OrbitControls/>
+                    
+                    <SkyBox />
+                    
+                    <axesHelper args={[5]} />
 
-            </Canvas>
+                </Canvas>
+            </div>
         </div>
     )
 }

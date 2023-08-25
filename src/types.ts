@@ -12,7 +12,8 @@ export interface WallDef{
 }
 
 export type VaseProps = {
-    position: Position
+    position: Position,
+    size: number
 }
 
 export type Position = [number, number, number]
