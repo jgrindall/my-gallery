@@ -7,17 +7,15 @@ import { useZustand } from 'use-zustand';
 
 type UIElementProps = {
     position: Vector3Tuple,
-    id:string,
-    setActivity?:any
+    id:string
 }
 
 const UIElement = (props: UIElementProps)=>{
     
     const setActivity = useZustand(statusStore, (state) => state.setActivity)
 
-    const f = ()=>{
+    const onClick = ()=>{
         setActivity("activity" + props.id)
-        console.log(props.id)
     }
 
     return <Billboard
@@ -30,7 +28,7 @@ const UIElement = (props: UIElementProps)=>{
         <Html>
             <div
                 className="annotation"
-                onClick={f}
+                onClick={onClick}
             >
                 #{props.id}
             </div>
@@ -46,24 +44,17 @@ const UIElement = (props: UIElementProps)=>{
     </Billboard>
 }
 
-const e = () => {
+export const UIElements = getVases().map((position:Vector3Tuple, i:number) => {
 
-    //const setActivity = useZustand(statusStore, (state) => state.setActivity)
+    const elementPos: Vector3Tuple = [
+        position[0],
+        position[1] + 3,
+        position[2]
+    ]
+    return <UIElement
+        id={'' + i}
+        key={i}
+        position={elementPos}
+    />
 
-    return getVases().map((position:Vector3Tuple, i:number) => {
-
-        const elementPos: Vector3Tuple = [
-            position[0],
-            position[1] + 3,
-            position[2]
-        ]
-        return <UIElement
-            id={'' + i}
-            key={i}
-            position={elementPos}
-        />
-
-    })
-}
-
-export const UIElements = e()
+})
