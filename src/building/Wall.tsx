@@ -14,7 +14,6 @@ type Props = {
 
 type R = RefObject<THREE.Mesh>
 
-
 const Wall = (props: Props) => {
     let texture: any, normal: any
     const size = 20

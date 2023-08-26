@@ -1,5 +1,7 @@
 body{
-  
+    overflow: hidden;
+    margin:0;
+    padding:0;
 }
 
 .annotation {
@@ -12,8 +14,25 @@ body{
     justify-content: center;
     align-items: center;
     background-color: red;
-  }
-  
-  .annotation:hover {
+}
+
+.annotation:hover {
     background-color: goldenrod;
-  }
+}
+
+.controls{
+    position: fixed;
+    top:0;
+    right:0
+}
+
+#canvas-container-walk, #canvas-container-activity{
+    width: 1024px;
+    height:768px;
+    border:1px solid #ccc;
+}
+
+.inactive{
+    pointer-events: none;
+    display: none;
+}

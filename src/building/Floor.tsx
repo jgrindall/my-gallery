@@ -1,9 +1,8 @@
-import { RefObject, useMemo } from 'react';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { RefObject } from 'react';
 import * as THREE from 'three';
 import { useBox } from "@react-three/cannon";
 import { Mesh } from "three"
-import { WallDef } from "./types"
+import { WallDef } from "../types"
 import { useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
 

@@ -1,7 +1,8 @@
 import { useSphere } from "@react-three/cannon";
-import { useEffect, useRef, RefObject, useState, useMemo, createRef } from "react"
+import { useEffect, RefObject, useState} from "react"
 import {useFrame, useThree} from "@react-three/fiber";
-import {usePersonControls, Motion} from "./PersonControls";
+import {usePlayerControls} from "./PlayerControls";
+import {Motion} from "./types"
 import { Mesh, Vector3, Vector3Tuple } from "three"
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
 
 const Player = (props: Props) => {
     const {camera} = useThree()
-    const motion: Motion = usePersonControls()
+    const motion: Motion = usePlayerControls()
     const [heading, setHeading] = useState(-90)
 
     const getHeadingAsVector = (length:number)=>{

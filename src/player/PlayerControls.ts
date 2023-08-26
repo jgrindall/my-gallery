@@ -1,22 +1,7 @@
-import { useEffect, useRef, RefObject, useState, useMemo } from "react"
+import { useEffect, useState } from "react"
+import {Motion, keyToDirection, allowedKeys, AllowedKeyCode} from "./types"
 
-export type Motion = {
-    forward: false,
-    backward: false,
-    left: false,
-    right: false
-}
-
-export const usePersonControls = () => {
-
-    const allowedKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]
-
-    const keys = {
-        ArrowUp: 'forward',
-        ArrowDown: 'backward',
-        ArrowLeft: 'left',
-        ArrowRight: 'right'
-    }
+export const usePlayerControls = () => {
 
     const initialState: Motion = {
         forward: false,
@@ -30,13 +15,12 @@ export const usePersonControls = () => {
     useEffect(() => {
         
         const handleKey = (code:string, value:boolean) => {
-            if(allowedKeys.includes(code)){
-                //eg. forward, backward etc
-                const mappedValue = keys[code as keyof typeof keys]
-                setMovement((m) => {
+            if(allowedKeys.includes(code as AllowedKeyCode)){
+                const mappedDirection = keyToDirection[code as keyof typeof keyToDirection]
+                setMovement((m: Motion):Motion => {
                     return {
                         ...m,
-                        [mappedValue]: value
+                        [mappedDirection]: value
                     }
                 })
             }
@@ -44,7 +28,6 @@ export const usePersonControls = () => {
 
         const handleKeyDown = (e:KeyboardEvent) => {
             handleKey(e.code, true)
-            
         }
         const handleKeyUp = (e:KeyboardEvent) => {
             handleKey(e.code, false)

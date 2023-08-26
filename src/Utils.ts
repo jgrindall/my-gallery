@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { Mesh, Vector3, Vector3Tuple } from "three"
+import { Vector3Tuple } from "three"
 
 export const makeCube = (edgeSize: number): THREE.Vector3[]=>{
     const points = []
@@ -63,6 +63,6 @@ export const getBounds = (g: THREE.Group)=>{
     const centerX = (minX + maxX)/2
     const centerY = (minY + maxY)/2
     const centerZ = (minZ + maxZ)/2
-    
+
     return {minX, minY, minZ, maxX, maxY, maxZ, sizeX, sizeY, sizeZ, centerX, centerY, centerZ}
 }

@@ -1,4 +1,6 @@
-export type WallsPath =  [number, number][]
+import { Vector3Tuple, Vector2Tuple } from "three"
+
+export type WallsPath =  Vector2Tuple[]
 
 export interface WallDef{
     centre:{
@@ -12,8 +14,6 @@ export interface WallDef{
 }
 
 export type VaseProps = {
-    position: Position,
+    position: Vector3Tuple,
     size: number
 }
-
-export type Position = [number, number, number]

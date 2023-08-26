@@ -1,6 +1,7 @@
 import {min, max} from "underscore"
-import type {WallsPath} from "./types"
-import {WallDef, Position} from "./types";
+import type {WallsPath} from "../types"
+import {WallDef} from "../types";
+import {Vector3Tuple } from "three"
 
 const centre = (path:WallsPath): WallsPath=>{
     const minX = min(path.map(p => p[0]))
@@ -89,7 +90,7 @@ export const getFloor = ()=>{
     return floor
 }
 
-export const getVases = ():Position[]=>{
+export const getVases = ():Vector3Tuple[]=>{
     return [
         [0, 3, -10],
         [0, 3, 10]

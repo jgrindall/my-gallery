@@ -1,11 +1,10 @@
 import { useBox } from "@react-three/cannon";
-import { useEffect, useRef, RefObject, useState, useMemo, createRef } from "react"
-import { Mesh, Vector3, Vector3Tuple } from "three"
-import { Merged, OrthographicCamera, OrbitControls } from "@react-three/drei";
+import { RefObject } from "react"
+import { Mesh } from "three"
 import { useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
 import * as THREE from 'three';
-import {WallDef} from "./types";
+import {WallDef} from "../types";
 
 type Props = {
     walls: WallDef[]
