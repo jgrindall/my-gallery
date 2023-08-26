@@ -62,6 +62,16 @@ const Wall = (props: Props) => {
     const refTop: R = bTop[0] as R
 
 
+/**
+ * 
+ * <Wall 
+                        position={[0, 0, 0]}
+                        modelUrl={"assets/Wall/scene.gltf"}
+                        mapUrl={"assets/Wall/Textures/White_Wall.jpg"}
+                        normalMapUrl={"assets/Wall/Textures/White_Wall_NORMAL.jpg"}
+                    />
+ */
+
     texture = useMemo(() => new THREE.TextureLoader().load(props.mapUrl), [props.mapUrl]);
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;

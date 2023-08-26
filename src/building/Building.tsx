@@ -1,6 +1,6 @@
 import { useBox } from "@react-three/cannon";
 import { RefObject } from "react"
-import { Mesh } from "three"
+import { Mesh, Vector3Tuple } from "three"
 import { useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
 import * as THREE from 'three';
@@ -12,7 +12,11 @@ type Props = {
 
 const Wall = (props: {def:WallDef})=>{
 
-    const texture = useLoader(TextureLoader, './stucco_white_paint_wall_texture.jpg');
+    const position:Vector3Tuple = [props.def.centre.x, props.def.centre.y, props.def.centre.z]
+    const size: Vector3Tuple = [props.def.wx, props.def.wy, props.def.wz]
+
+    const texture = useLoader(TextureLoader, './assets/White_Wall.jpg');
+    const normal = useLoader(TextureLoader, './assets/White_Wall_NORMAL.jpg');
 
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.offset.set( 0, 0 );
@@ -21,16 +25,15 @@ const Wall = (props: {def:WallDef})=>{
     const api = useBox(() => ({
         type: "Static",
         position: [props.def.centre.x, props.def.centre.y, props.def.centre.z],
-        args: [props.def.wx, props.def.wy, props.def.wz]
+        args: size
     }))
 
     const ref:RefObject<Mesh> = api[0] as RefObject<Mesh>
 
     return(
-        //@ts-ignore
-        <mesh ref={ref} position={[props.def.centre.x, props.def.centre.y, props.def.centre.z]}>
-            <boxGeometry args={[props.def.wx, props.def.wy, props.def.wz]} />
-            <meshStandardMaterial map={texture}/>
+        <mesh ref={ref} position={position} castShadow receiveShadow>
+            <boxGeometry args={size} />
+            <meshStandardMaterial map={texture} normalMap={normal} roughness={1}/>
         </mesh>
     )
 }
@@ -47,3 +50,7 @@ const Building = (props: Props) => {
 }
 
 export default Building;
+
+
+
+
