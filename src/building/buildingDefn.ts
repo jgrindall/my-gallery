@@ -1,5 +1,6 @@
 import {min, max} from "underscore"
 import type {WallsPath} from "../types"
+import type {PosterDef} from "../poster/types"
 import {WallDef} from "../types";
 import {Vector3Tuple } from "three"
 
@@ -94,5 +95,26 @@ export const getVases = ():Vector3Tuple[]=>{
     return [
         [0, 3, -10],
         [0, 3, 10]
+    ]
+}
+
+export const getPosters = (): PosterDef[]=>{
+    return [
+        {
+            html: "Roman Britain was the territory that became the Roman Province of Britannia after the Roman conquest of Britain, consisting of a large part of the island of Great Britain. The occupation lasted from AD 43 to AD 410. Julius Caesar invaded Britain in 55 and 54 BC as part of his Gallic Wars.[3] According to Caesar, the Britons had been overrun or culturally assimilated by Belgic tribes during the British Iron Age and had been aiding Caesar's enemies",
+            position:[-10, 10, -45],
+            width:60,
+            bgColor: "#bbb",
+            height:20,
+            type: "text"
+        },
+        {
+            position:[36, 10, -45],
+            width:20,
+            height:15,
+            bgColor: "#4d4",
+            url: "/assets/soldier.png",
+            type: "image"
+        }
     ]
 }

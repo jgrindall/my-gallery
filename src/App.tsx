@@ -1,7 +1,7 @@
 import statusStore from "./store"
 import { useZustand } from 'use-zustand';
 import MuseumView from './MuseumView';
-import ActivityView from "./ActivityView";
+import VaseActivityView from "./activities/VaseActivityView";
 
 function App() {
 
@@ -14,7 +14,8 @@ function App() {
             <button onClick={exit}> Exit </button>
         </div>
         <MuseumView/>
-        <ActivityView/>
+        <VaseActivityView/>
+
     </div>
 
 }

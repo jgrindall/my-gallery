@@ -1,11 +1,11 @@
 import { Canvas } from '@react-three/fiber'
 import {OrbitControls, PerspectiveCamera} from "@react-three/drei"
-import statusStore from "./store"
+import statusStore from "../store"
 import { useZustand } from 'use-zustand';
-import VaseAsset from './vase/VaseAsset';
-import { DisableRender } from './DisableRender';
+import VaseAsset from '../vase/VaseAsset';
+import { DisableRender } from '../DisableRender';
 
-function ActivityView() {
+function VaseActivityView() {
 
     const activity = useZustand(statusStore, (state) => state.activity);
     const hasActivity = !!activity
@@ -26,5 +26,5 @@ function ActivityView() {
 
 }
 
-export default ActivityView;
+export default VaseActivityView;
 

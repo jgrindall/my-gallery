@@ -1,5 +1,6 @@
 import {Billboard} from "@react-three/drei"
-import { getVases} from "./building/buildingDefn"
+import { getVases, getPosters} from "./building/buildingDefn"
+import {PosterDef} from "./poster/types"
 import { Html } from '@react-three/drei'
 import {Vector3Tuple } from "three"
 import statusStore from "./store"
@@ -44,8 +45,7 @@ const UIElement = (props: UIElementProps)=>{
     </Billboard>
 }
 
-export const UIElements = getVases().map((position:Vector3Tuple, i:number) => {
-
+const VaseUIElements = getVases().map((position:Vector3Tuple, i:number) => {
     const elementPos: Vector3Tuple = [
         position[0],
         position[1] + 3,
@@ -56,5 +56,24 @@ export const UIElements = getVases().map((position:Vector3Tuple, i:number) => {
         key={i}
         position={elementPos}
     />
-
 })
+
+const PosterUIElements = getPosters().map((def:PosterDef, i:number) => {
+    const elementPos: Vector3Tuple = [
+        def.position[0],
+        def.position[1] + 3,
+        def.position[2]
+    ]
+    return <UIElement
+        id={'' + i}
+        key={i}
+        position={elementPos}
+    />
+})
+
+export const UIElements = ()=>{
+    return <group>
+        {VaseUIElements}
+        {PosterUIElements}
+    </group>
+}

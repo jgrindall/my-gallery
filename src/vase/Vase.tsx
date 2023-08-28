@@ -11,16 +11,8 @@ import { useBox } from "@react-three/cannon";
 import {VaseProps} from "./types"
 import VaseAsset from "./VaseAsset"
 import { useFrame } from "@react-three/fiber"
-
-function Outline(props:{size: number, offset:number, color:THREE.Color | string, position: Vector3Tuple}){
-    const points = makeCube(props.size + props.offset)
-    return <Line
-        points={points}
-        position={[props.position[0] - props.size/2, props.position[1] - props.size/2, props.position[2] - props.size/2]}
-        color={props.color}
-        lineWidth={1}
-    />
-}
+import { RoundedBox } from "@react-three/drei";
+import { Outline } from "./Outline"
 
 const Vase = (props: VaseProps)=>{
 
@@ -64,12 +56,37 @@ const Vase = (props: VaseProps)=>{
             onPointerLeave={onLeave}
         >
 
-            <Outline
+           
+
+
+            <RoundedBox position={[5, 5, 5]} args={[4, 4, 4]} radius={0.1}>
+                <MeshTransmissionMaterial
+                    temporalDistortion={0} 
+                    backsideThickness={5}
+                    thickness={2} 
+                    distortionScale={0}
+                    attach="material"
+                    />
+            </RoundedBox>
+
+
+            
+        </group>
+    )
+}
+export default Vase;
+
+
+/**
+ * 
+ *  <Outline
                 offset={0.01}
                 color={'#555'}
                 size={props.size}
                 position={props.position}
             />
+
+
 
             <VaseAsset
                 url="/assets/Got_lq.obj" 
@@ -77,7 +94,10 @@ const Vase = (props: VaseProps)=>{
                 size={props.size}
             />
 
-            <mesh ref={ref}>
+
+
+ * <mesh ref={ref} castShadow>
+
                 <boxGeometry args={size}></boxGeometry>
 
                 <MeshTransmissionMaterial
@@ -96,7 +116,4 @@ const Vase = (props: VaseProps)=>{
 
             </mesh>
 
-        </group>
-    )
-}
-export default Vase;
+ */

@@ -1,5 +1,4 @@
 import { Canvas } from '@react-three/fiber'
-import StainedGlass from "./StainedGlass"
 import SkyBox from './SkyBox';
 import {Stats, OrbitControls, PerspectiveCamera} from "@react-three/drei"
 import { Physics } from "@react-three/cannon"
@@ -12,7 +11,9 @@ import statusStore from "./store"
 import { useZustand } from 'use-zustand';
 import { UIElements } from './UIElements';
 import { Vases } from './vase/Vases';
+import { Posters } from './poster/Posters';
 import { DisableRender } from './DisableRender';
+
 
 function MuseumView() {
 
@@ -32,16 +33,16 @@ function MuseumView() {
                 position={[0, 0, 80]}
             />
             <Physics gravity={[0, -200, 0]}>
-                <Debug color="rgb(255,0,0)" scale={1.05}>
+                <Debug color="rgb(255,0,0)" scale={0.00}>
                     <>{Vases}</>
-                    <StainedGlass position={[5, 5, 5]}></StainedGlass>
+                    <>{Posters}</>
                     <Building walls={walls}></Building>
                     <Floor floor={floor}></Floor>
                     <Player position={[0, 3, 0]} attachCamera={false}></Player>
                 </Debug>
             </Physics>
-                <>{UIElements}</>
-            <ambientLight color={'#666'} intensity={1}/>
+            <UIElements/>
+            <ambientLight color={'#666'} intensity={3}/>
             <pointLight args={['#fff', 0.5]} position={[10, 10, 10]} />
             <rectAreaLight
                 width={6}
@@ -53,19 +54,21 @@ function MuseumView() {
             />
             <pointLight
                 position={[15, 25, 5]}
-                intensity={0.6}                    
+                intensity={0.6}
+                castShadow             
             />
             <directionalLight
-                args={['#fff', 0.5]}
+                args={['#fff', 0.75]}
                 position={[0, 0, 1]}
+                castShadow
             />
             <Stats/> 
             <OrbitControls/>
             <SkyBox />
+
         </Canvas>
     </div>
 
 }
 
 export default MuseumView;
-
