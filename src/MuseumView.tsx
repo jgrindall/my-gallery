@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import SkyBox from './SkyBox';
-import {Stats, OrbitControls, PerspectiveCamera, Extrude} from "@react-three/drei"
+import {Stats, OrbitControls, PerspectiveCamera, SoftShadows} from "@react-three/drei"
 import { Physics } from "@react-three/cannon"
 import Building from './building/Building';
 import Floor from './building/Floor';
@@ -83,26 +83,33 @@ function MuseumView() {
                 </Debug>
             </Physics>
             <UIElements/>
+
             <ambientLight color={'#666'} intensity={3}/>
             
             <rectAreaLight
                 width={6}
                 height={2}
                 color={'#fc7'}
-                intensity={2}
+                intensity={0.333}
                 position={[5, 8, 8]}
 
             />
             <pointLight
                 position={[15, 25, 5]}
-                intensity={1.5}
-                castShadow             
+                intensity={0.15}
+                castShadow
+                shadow-mapSize-width={256}
+                shadow-mapSize-height={256}     
             />
             <directionalLight
-                args={['#fff', 1.5]}
+                args={['#fff', 0.15]}
                 position={[0, 0, 1]}
                 castShadow
+                shadow-mapSize-width={256}
+                shadow-mapSize-height={256}
             />
+
+            <SoftShadows />
             
             <Stats/> 
             <OrbitControls/>
