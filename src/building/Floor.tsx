@@ -28,7 +28,7 @@ const Floor = (props: Props) => {
     const ref:RefObject<Mesh> = api[0] as RefObject<Mesh>
 
     return (
-        <mesh ref={ref} position={[props.floor.centre.x, props.floor.centre.y, props.floor.centre.z]}>
+        <mesh ref={ref} position={[props.floor.centre.x, props.floor.centre.y, props.floor.centre.z]} receiveShadow>
             <boxGeometry args={[props.floor.wx, props.floor.wy, props.floor.wz]} />
             <meshStandardMaterial map={texture}/>
         </mesh>

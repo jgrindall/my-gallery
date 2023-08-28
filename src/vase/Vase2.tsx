@@ -16,7 +16,7 @@ const Vase2 = (props: VaseProps)=>{
         backsideThickness: 2,
         chromaticAberration: 0.4,
         clearcoat: 0,
-        color: "#eff5f5",
+        color: "#f7fafa",
         distortion: 0,
         distortionScale: 0.3,
         ior: 2.5,
