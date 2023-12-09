@@ -19,18 +19,22 @@ const ImagePoster = (props:{ def: ImagePosterDef})=>{
     const textureWidth = bgTexture.image.width;
     const textureHeight = bgTexture.image.height;
 
-    console.log(2, props.def.width, props.def.height, textureWidth, textureHeight)
+    
+    const scaleX = props.def.width / textureWidth
+    const scaleY = props.def.height / textureHeight
 
-    bgTexture.offset.x = 0.1
-    bgTexture.offset.y = 0.1
+    const scale = Math.min(scaleX, scaleY)
 
-    bgTexture.repeat.x = 2
+    
+    const w = textureWidth * scale
+    const h = textureHeight * scale
 
-  
+    console.log(2, props.def.width, props.def.height, textureWidth, textureHeight, scale, w, h)
+
     return (
         <mesh position={[-0.5, -0.5, 0.1]}>
-            <planeGeometry args={[props.def.width - 1, props.def.height - 1]} attach="geometry"/>
-            <meshPhongMaterial color="orange" map={bgTexture} attach="material"/>
+            <planeGeometry args={[w, h]} attach="geometry"/>
+            <meshPhongMaterial transparent map={bgTexture} attach="material"/>
         </mesh>  
     )
 }

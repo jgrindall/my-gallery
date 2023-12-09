@@ -15,6 +15,21 @@ const Player = (props: Props) => {
     const motion: Motion = usePlayerControls()
     const [heading, setHeading] = useState(-90)
 
+
+    
+    /**
+    const [isDown, setIsDown] = useState(false)
+
+    useEffect(() => {
+        document.addEventListener('pointerdown', ()=>{
+            setIsDown(true)
+        })
+        document.addEventListener('pointerup', ()=>{
+            setIsDown(false)
+        })
+    })
+    **/
+
     const getHeadingAsVector = (length:number)=>{
         return new Vector3(Math.cos(heading * Math.PI/180), 0, Math.sin(heading * Math.PI/180)).multiplyScalar(length)
     }
@@ -74,12 +89,12 @@ const Player = (props: Props) => {
     })
 
     updateLookAt()
-    
+
     return (
         <>
             <mesh ref={ref}>
                 <sphereGeometry args={[1, 5, 5]} />
-                <meshNormalMaterial />
+                <meshBasicMaterial color={"#f00"}/>
             </mesh>
         </>
     )

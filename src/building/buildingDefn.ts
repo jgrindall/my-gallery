@@ -91,10 +91,33 @@ export const getFloor = ()=>{
     return floor
 }
 
-export const getVases = ():Vector3Tuple[]=>{
+export type ExhibitDef = {
+    plinth?:{
+        height:number
+    },
+    footprint:{
+        position:[number, number],
+        width: number,
+        length:number
+    },
+    height:number,
+    model: string
+}
+
+export const getExhibits = ():ExhibitDef[]=>{
     return [
-        [0, 3, -10],
-        [0, 3, 10]
+        {
+            plinth:{
+                height:10
+            },
+            height:8,
+            footprint:{
+                position:[0, 3],
+                width:10,
+                length:15
+            },
+            model: "/assets/Got_lq.obj" 
+        }
     ]
 }
 

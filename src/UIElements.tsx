@@ -1,5 +1,5 @@
 import {Billboard} from "@react-three/drei"
-import { getVases, getPosters} from "./building/buildingDefn"
+import { getExhibits, getPosters, ExhibitDef} from "./building/buildingDefn"
 import {PosterDef} from "./poster/types"
 import { Html } from '@react-three/drei'
 import {Vector3Tuple } from "three"
@@ -45,11 +45,11 @@ const UIElement = (props: UIElementProps)=>{
     </Billboard>
 }
 
-const VaseUIElements = getVases().map((position:Vector3Tuple, i:number) => {
+const VaseUIElements = getExhibits().map((def:ExhibitDef, i:number) => {
     const elementPos: Vector3Tuple = [
-        position[0],
-        position[1] + 3,
-        position[2]
+        def.footprint.position[0],
+        10,
+        def.footprint.position[1],
     ]
     return <UIElement
         id={'' + i}

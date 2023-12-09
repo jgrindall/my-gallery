@@ -1,70 +1,101 @@
 
-import { Vector3Tuple } from "three"
-import { MeshTransmissionMaterial } from '@react-three/drei'
-import {VaseProps} from "./types"
-import { RoundedBox } from "@react-three/drei";
+import { Vector3Tuple, RepeatWrapping, Vector2, MeshPhysicalMaterial } from "three"
+import {VaseProps, glassConfig} from "./types"
+import { RoundedBox, Box, MeshTransmissionMaterial } from "@react-three/drei";
 import { useBox } from "@react-three/cannon";
+import { useEffect, useRef, RefObject, useState, useMemo } from "react"
 import VaseAsset from "./VaseAsset"
+import { useLoader } from '@react-three/fiber'
+import { TextureLoader } from 'three/src/loaders/TextureLoader';
+import { Plinth } from "./Plinth";
+//@ts-ignore
+import { GUI } from 'dat.gui'
 
 const Vase2 = (props: VaseProps)=>{
-
+ 
     const config = {
-        anisotropy: 0.3,
-        attenuationColor: "#fff",
-        attenuationDistance: 0.5,
-        backsideResolution: 1024,
-        backsideThickness: 2,
-        chromaticAberration: 0.4,
-        clearcoat: 0,
-        color: "#f7fafa",
-        distortion: 0,
-        distortionScale: 0.3,
-        ior: 2.5,
-        meshPhysicalMaterial: true,
-        resolution: 2048,
-        roughness: 0.05,
-        samples: 10,
-        temporalDistortion: 0.65,
-        thickness: 0.25,
-        transmission: 1,
-        transmissionSampler: false
+        ...glassConfig
     }
 
+    const position = props.def.footprint.position
+
+    const p:Vector3Tuple = [position[0], 5, position[1]]
+
     const size: Vector3Tuple = [
-        props.size,
-        props.size,
-        props.size
+        6, 6, 6
     ]
+
+    const plinthHeight = props.def.plinth ? props.def.plinth.height : 0
+
+    const vasePos: Vector3Tuple = [p[0], p[1] + plinthHeight, p[2]]
 
     useBox(() => ({
         type: "Static",
         args:size,
-        position: props.position
+        position: p
     }))
+
+
+    const matRef:RefObject<MeshPhysicalMaterial> = useRef<MeshPhysicalMaterial>() as RefObject<MeshPhysicalMaterial>
+
+    useEffect(() => {
+        const gui = new GUI()
+        const meshPhysicalMaterialFolder = gui.addFolder('THREE.MeshPhysicalMaterial')
+
+        const updateMaterial = ()=>{
+
+        }
+        
+       /**
+        meshPhysicalMaterialFolder.add(matRef.current, 'wireframe')
+        meshPhysicalMaterialFolder.add(matRef.current, 'reflectivity', 0, 1)
+        meshPhysicalMaterialFolder.add(matRef.current, 'roughness', 0, 1)
+        meshPhysicalMaterialFolder.add(matRef.current, 'metalness', 0, 1)
+        meshPhysicalMaterialFolder.add(matRef.current, 'clearcoat', 0, 1, 0.01)
+        meshPhysicalMaterialFolder.add(matRef.current, 'clearcoatRoughness', 0, 1, 0.01)
+        meshPhysicalMaterialFolder.add(matRef.current, 'transmission', 0, 1, 0.01)
+        meshPhysicalMaterialFolder.add(matRef.current, 'ior', 1.0, 2.333)
+        meshPhysicalMaterialFolder.add(matRef.current, 'thickness', 0, 10.0)
+        meshPhysicalMaterialFolder.open()
+       **/
+
+      }, [])
+
+
+    
+
+
 
     return (
 
         <group>
 
+            {
+                props.def.plinth
+                    ?
+                    <Plinth 
+                        position={p}
+                        width={5} 
+                        height={7}
+                        length={6}
+                    />
+                    :
+                    null
+            }
+
             <VaseAsset
-                url="/assets/Got_lq.obj" 
-                position={props.position}
-                size={props.size}
+                url={props.def.model}
+                position={vasePos}
+                size={7}
             />
 
             <RoundedBox
-                position={props.position}
+                position={vasePos}
                 args={size}
                 radius={0.075}
             >
 
-            {
-                config.meshPhysicalMaterial 
-                    ?
-                    <meshPhysicalMaterial {...config} />
-                    :
-                    <MeshTransmissionMaterial {...config} toneMapped={true} />
-            }
+            <meshPhysicalMaterial ref={matRef} {...config} />
 
             </RoundedBox>
 

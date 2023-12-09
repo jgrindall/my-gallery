@@ -15,6 +15,7 @@
       "@types/react-dom": "^18.2.4",
       "@types/three": "^0.152.0",
       "@types/underscore": "^1.11.6",
+      "dat.gui": "^0.7.9",
       "react": "^18.2.0",
       "react-dom": "^18.2.0",
       "react-scripts": "5.0.1",
