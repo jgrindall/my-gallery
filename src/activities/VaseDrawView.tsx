@@ -18,36 +18,27 @@ function VaseActivityView() {
     }
 
     return <div id="canvas-container-activity">
-        <button
+        <button className='top-button'
             style={{
-                top:0,
-                left:0,
-                position: "fixed",
-                zIndex: 100
+                left:0
             }}
             onClick={onClick}
         >
             Toggle
         </button>
 
-        <button
+        <button className='top-button'
             style={{
-                top:0,
-                left:100,
-                position: "fixed",
-                zIndex: 100
+                left:100
             }}
             onClick={()=>setClr('red')}
         >
             Red
         </button>
 
-        <button
+        <button className='top-button'
             style={{
-                top:0,
-                left:200,
-                position: "fixed",
-                zIndex: 100
+                left:200
             }}
             onClick={()=>setClr('green')}
         >

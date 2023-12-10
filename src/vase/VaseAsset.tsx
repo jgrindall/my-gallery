@@ -9,27 +9,6 @@ import { useZustand } from 'use-zustand';
 
 //https://stackoverflow.com/questions/75429834/what-is-uv-in-pointerevent-react-three-fiber
 
-/**
-const drawSomeLines = (ctx: CanvasRenderingContext2D)=>{
-    return
-    const r = ()=>Math.random() * 1024
-    ctx.strokeStyle = "rgb(20, 20, 100)"
-    ctx.beginPath()
-    for (let i = 0; i < 10; i++){
-        if(i === 0){    
-            ctx.moveTo(r(), r())
-        }
-        else{
-            ctx.lineTo(r(), r())
-        }
-    }
-    ctx.stroke()
-    for(let i = 0; i < 10; i++){
-        drawCircle(ctx, r(), r(), 'rgb(100, 200, 10)')
-    }
-}
-
-**/
 
 const radius = 1
 const textureSize = 512
@@ -46,6 +25,28 @@ type Tri = [
     THREE.Vector2,
     THREE.Vector2
 ]
+
+type Edge = [
+    THREE.Vector2,
+    THREE.Vector2
+]
+
+const EPS = 0.0001
+
+const edgeEquals = (e1: Edge, e2: Edge): boolean=>{
+    return (
+        Math.abs(e1[0].x - e2[0].x) < EPS
+        && Math.abs(e1[0].y - e2[0].y) < EPS
+        && Math.abs(e1[1].x - e2[1].x) < EPS
+        && Math.abs(e1[1].y - e2[1].y) < EPS
+    )
+}
+
+const sharesEdge = (t1:Tri, t2:Tri):boolean=>{
+    console.log(t1, t2)
+
+    return false
+}
 
 const drawTris = (ctx: CanvasRenderingContext2D, tris: Tri[])=>{
     ctx.strokeStyle = "#333333"
@@ -69,29 +70,19 @@ const bgColor = "rgb(220, 200, 200)"
 
 export default function VaseAsset(props: {enabled?: boolean, size: number, url: string, position: [number, number, number]}) {
 
-    const url = props.url
-    //const url = "cube.obj"
-
+    //const url = props.url
+    const url = "cube.obj"
     const clr = useZustand(statusStore, (state) => state.clr);
-
     const obj = useLoader(OBJLoader, url)
-
-    console.log(obj)
-
     const bounds = getBounds(obj)
     const [drawing, setDrawing] = useState(false)
-
-
-
-    const {camera, gl, scene} = useThree()
-
+    const {camera, gl} = useThree()
     useEffect(() => {
        if(!props.enabled && drawing){
         setDrawing(false)
        }
     }, [props.enabled])
 
-   
     const pickableObjects = useMemo(() => {
         const pickableObjects:THREE.Mesh[] = []
 
@@ -111,10 +102,27 @@ export default function VaseAsset(props: {enabled?: boolean, size: number, url: 
                 const g: THREE.BufferGeometry = mesh.geometry as THREE.BufferGeometry
                 g.computeVertexNormals()
                 const tris:Tri[] = getFaceVertexUvs(mesh) as Tri[]
-                // drawTris(ctx, tris)
+                drawTris(ctx, tris)
                 canvasMap.needsUpdate = true;
                 pickableObjects.push(mesh)
+
+                console.log(g.getAttribute("position"))
+                console.log(g.getAttribute("uv"))
+
+                for(let i = 0; i < tris.length - 1; i++){
+                    for(let j = i + 1; j < tris.length; j++){
+                        console.log("check", i, j)
+                        if(sharesEdge(tris[i], tris[j])){
+                            console.log(i, j)
+                        }
+                    }
+                }
+
+                tris.forEach(t=>{
+                    console.log(t)
+                })
             }
+            
         })
         return pickableObjects
     }, [obj])
@@ -158,12 +166,8 @@ export default function VaseAsset(props: {enabled?: boolean, size: number, url: 
     }
 
     const handleDraw = (e:ThreeEvent<PointerEvent>)=>{
-        //@ts-ignore
-        //arc(4, 5, e.clientX, e.clientY)
-        arc(6, 5, e.clientX, e.clientY)
+        arc(5, 5, e.clientX, e.clientY)
         arc(3, 3, e.clientX, e.clientY)
-        arc(1, 2, e.clientX, e.clientY)
-
         pickableObjects.forEach(o=>{
             //@ts-ignore
             o.material.map.needsUpdate = true;
@@ -205,10 +209,9 @@ export default function VaseAsset(props: {enabled?: boolean, size: number, url: 
                 onPointerUp={onPointerUp}
                 castShadow 
             >
-        <primitive 
-            object={obj}
-          
-            >
-        </primitive>
-    </group>
+                <primitive 
+                    object={obj}
+                >
+                </primitive>
+            </group>
 }

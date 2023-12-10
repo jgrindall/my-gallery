@@ -72,3 +72,13 @@ body{
     background-color: white;
     border: 1px solid black;
 }
+
+.top-button{
+    padding:8px;
+    top:0;
+    left:0;
+    position: fixed;
+    z-index: 100;
+    font-size: 16px;
+    margin:10px;
+}
