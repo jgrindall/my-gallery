@@ -4,6 +4,7 @@ import MuseumView from './MuseumView';
 import VaseActivityView from "./activities/VaseActivityView";
 import VaseDrawView from "./activities/VaseDrawView";
 import DrawView from "./DrawView"
+import Museum from "./activities/Museum"
 
 //https://static01.nyt.com/packages/pdf/arts/BritishMuseumMap_Final.pdf
 
@@ -15,7 +16,7 @@ function App() {
     return <div className="container">
        
         
-        <VaseDrawView/>
+        <Museum/>
         
     </div>
 
