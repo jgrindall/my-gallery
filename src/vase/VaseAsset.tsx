@@ -4,6 +4,9 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import * as THREE from "three"
 import { useState, useMemo, useEffect, RefObject, useRef} from "react"
 import {getFaceVertexUvs} from "./GUtils"
+import statusStore from "../store"
+import { useZustand } from 'use-zustand';
+
 //https://stackoverflow.com/questions/75429834/what-is-uv-in-pointerevent-react-three-fiber
 
 /**
@@ -62,11 +65,14 @@ const drawTris = (ctx: CanvasRenderingContext2D, tris: Tri[])=>{
     })
 }
 
+const bgColor = "rgb(220, 200, 200)"
 
 export default function VaseAsset(props: {enabled?: boolean, size: number, url: string, position: [number, number, number]}) {
 
-    //const url = props.url
-    const url = "cube.obj"
+    const url = props.url
+    //const url = "cube.obj"
+
+    const clr = useZustand(statusStore, (state) => state.clr);
 
     const obj = useLoader(OBJLoader, url)
 
@@ -74,6 +80,8 @@ export default function VaseAsset(props: {enabled?: boolean, size: number, url: 
 
     const bounds = getBounds(obj)
     const [drawing, setDrawing] = useState(false)
+
+
 
     const {camera, gl, scene} = useThree()
 
@@ -95,21 +103,15 @@ export default function VaseAsset(props: {enabled?: boolean, size: number, url: 
                 canvas.width = textureSize
                 canvas.height = textureSize
                 const ctx: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
-                ctx!.fillStyle = "rgb(200, 200, 150)"
+                ctx!.fillStyle = bgColor
                 ctx?.fillRect(0, 0, textureSize, textureSize)
-                //drawSomeLines(ctx)
                 const canvasMap = new THREE.Texture(canvas)
                 mesh.material = new THREE.MeshPhongMaterial()
                 mesh.material.map = canvasMap
                 const g: THREE.BufferGeometry = mesh.geometry as THREE.BufferGeometry
                 g.computeVertexNormals()
-
                 const tris:Tri[] = getFaceVertexUvs(mesh) as Tri[]
-
-                console.log('getFaceVertexUvs', tris)
-
-                drawTris(ctx, tris)
-
+                // drawTris(ctx, tris)
                 canvasMap.needsUpdate = true;
                 pickableObjects.push(mesh)
             }
@@ -121,7 +123,7 @@ export default function VaseAsset(props: {enabled?: boolean, size: number, url: 
     const drawAt = (t:THREE.Texture, uv: THREE.Vector2):void => {
         const canvas = t.source.data
         const ctx: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
-        drawCircle(ctx, textureSize * uv.x, textureSize * (1 - uv.y))
+        drawCircle(ctx, textureSize * uv.x, textureSize * (1 - uv.y), clr)
     }
 
     const onPointerMove = (e:ThreeEvent<PointerEvent>)=>{
@@ -158,7 +160,9 @@ export default function VaseAsset(props: {enabled?: boolean, size: number, url: 
     const handleDraw = (e:ThreeEvent<PointerEvent>)=>{
         //@ts-ignore
         //arc(4, 5, e.clientX, e.clientY)
-        arc(8, 20, e.clientX, e.clientY)
+        arc(6, 5, e.clientX, e.clientY)
+        arc(3, 3, e.clientX, e.clientY)
+        arc(1, 2, e.clientX, e.clientY)
 
         pickableObjects.forEach(o=>{
             //@ts-ignore
