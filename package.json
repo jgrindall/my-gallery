@@ -20,6 +20,8 @@
       "react-dom": "^18.2.0",
       "react-scripts": "5.0.1",
       "three": "^0.152.2",
+      "three-mesh-bvh": "^0.6.8",
+      "three-subdivide": "^1.1.5",
       "typescript": "^5.0.4",
       "underscore": "^1.13.6",
       "use-zustand": "0.0.4",

@@ -20,10 +20,5 @@ export default function SkyBox() {
     texture = useCubeTexture(images, {path: "./assets/sky/"})
     scene.background = texture
 
-    const hdrEquirect = useLoader(RGBELoader, "assets/empty_warehouse_01_2k.hdr")
-    hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
-
-    scene.environment = hdrEquirect 
-
     return null
 }

@@ -23,3 +23,14 @@ export const  glassConfig = {
     transmissionSampler: true,
     opacity: 0
 }
+
+export type Tri = [
+    THREE.Vector2,
+    THREE.Vector2,
+    THREE.Vector2
+]
+
+export type Edge = [
+    THREE.Vector2,
+    THREE.Vector2
+]

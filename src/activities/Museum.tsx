@@ -11,9 +11,7 @@ function Museum() {
 
     const gltf = useLoader(GLTFLoader, "./assets/museum/scene.gltf");
 
-
     return <div id="canvas-container-activity">
-     
 
         <Canvas shadows >
             <PerspectiveCamera
