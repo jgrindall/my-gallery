@@ -42,7 +42,7 @@ export default function VaseAsset(props: {
        if(!props.enabled && drawing){
         setDrawing(false)
        }
-    }, [props.enabled])
+    }, [props.enabled, drawing])
 
     const raycaster = new THREE.Raycaster();
     raycaster.firstHitOnly = true;
@@ -82,7 +82,7 @@ export default function VaseAsset(props: {
             painter,
             geometricPainter
         }
-    }, [obj]);
+    }, [obj, raycaster]);
 
     // Get intersection from screen coordinates
     const getIntersection = (x0: number, y0: number): THREE.Intersection | undefined => {

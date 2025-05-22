@@ -3,7 +3,6 @@ import {OrbitControls, PerspectiveCamera} from "@react-three/drei"
 import statusStore from "../store"
 import { useZustand } from 'use-zustand';
 import VaseAsset from '../vase/VaseAsset';
-import { useEffect, useRef, RefObject, useState, useMemo } from "react"
 
 function VaseActivityView() {
 
