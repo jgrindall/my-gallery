@@ -44,8 +44,12 @@ export default function VaseAsset(props: {
        }
     }, [props.enabled, drawing])
 
-    const raycaster = new THREE.Raycaster();
-    raycaster.firstHitOnly = true;
+
+    const raycaster: THREE.Raycaster = useMemo(() => {
+        const raycaster = new THREE.Raycaster();
+        raycaster.firstHitOnly = true;
+        return raycaster;
+    }, []);
 
     const meshInfo: MeshInfo = useMemo(() => {
         const pickableObjects:THREE.Mesh[] = [];
