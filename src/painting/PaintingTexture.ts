@@ -14,6 +14,7 @@ export const getPaintingTexture = () => {
     
     // Create texture from canvas
     const paintingTexture = new THREE.CanvasTexture(textureCanvas);
+/**
 
 
     for (let i = 0; i < textureSize; i += 32) {
@@ -28,6 +29,7 @@ export const getPaintingTexture = () => {
         textureContext!.stroke();
     }
 
+**/
     paintingTexture.needsUpdate = true;
     return paintingTexture;
 }
