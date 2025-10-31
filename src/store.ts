@@ -4,7 +4,7 @@ type State = {
     activity: string | null
     enableControls: boolean,
     clr:string,
-    setClr:(clr: string)=>void
+    setColor:(clr: string)=>void
     setEnableControls:(enableControls:boolean) => void
     setActivity: (activity:string) => void
     exitActivity:()=>void
@@ -15,7 +15,7 @@ const statusStore = createStore<State>((set) => {
         activity: null,
         enableControls: false,
         clr: "orange",
-        setClr:(clr: string)=>{
+        setColor:(clr: string)=>{
             return set((state: State)=>{
                 return {
                     ...state,

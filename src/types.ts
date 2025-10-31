@@ -1,16 +1,15 @@
-import { Vector3Tuple, Vector2Tuple } from "three"
+import { Vector3Tuple } from "three"
+import * as THREE from "three"
 
-export type WallsPath =  Vector2Tuple[]
+export type MeshInfo = {
+    pickableObjects: THREE.Mesh[],
+    raycaster: THREE.Raycaster,
+    textures: THREE.CanvasTexture[],
+    painter: IPainter,
+}
 
-export interface WallDef{
-    centre:{
-        x:number,
-        y:number,
-        z:number
-    },
-    wx:number,
-    wy:number,
-    wz:number
+export interface IPainter {
+    projectionPaint(intersection: THREE.Intersection, radius: number, color: string): void;
 }
 
 export type VaseProps = {
