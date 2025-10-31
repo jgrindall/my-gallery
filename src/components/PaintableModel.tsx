@@ -9,21 +9,21 @@ import {Center} from "@react-three/drei"
 
 export default function PaintableModel(props: {
     enabled?: boolean, 
-    url: string, 
-    position: [number, number, number],
     brushColor?: string,
     brushRadius?: number
 }) {
     
     const url2 = "_king1-opt.glb"
-    const brushColor = props.brushColor || "#ff0000"
+    const brushColor = props.brushColor || "red"
     const radius = props.brushRadius || 0.02
 
     const gltf = useLoader(GLTFLoader, url2);
 
     const [drawing, setDrawing] = useState(false)
     const {camera, gl} = useThree()
-    
+
+    const [globalScale, setGlobalScale] = useState(1);
+
     useEffect(() => {
        if(!props.enabled && drawing){
             setDrawing(false)
@@ -52,6 +52,9 @@ export default function PaintableModel(props: {
                     roughness: 0.5,
                     metalness: 0.1
                 });
+                // Enable shadows on the mesh
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
                 textures.push(paintingTexture);
                 pickableObjects.push(mesh);
             }
@@ -80,7 +83,21 @@ export default function PaintableModel(props: {
     const handleDraw = (e: ThreeEvent<PointerEvent>) => {
         const intersection = getIntersection(e.clientX, e.clientY);
         if (intersection && intersection.object instanceof THREE.Mesh) {
-            meshInfo.painter.projectionPaint(intersection, radius, brushColor);
+            // If Shift key is held, fill the entire face
+            if (e.shiftKey) {
+                meshInfo.painter.fillFace(intersection, brushColor);
+            } else {
+                // Scale brush radius based on camera distance
+                // Closer camera = smaller radius (more detail)
+                // Farther camera = larger radius (broader strokes)
+                const cameraDistance = camera.position.length();
+                const baseDistance = 10; // Reference distance (initial camera position)
+                const radiusScale = cameraDistance / baseDistance;
+
+                const scaledRadius = radius * globalScale * radiusScale;
+
+                meshInfo.painter.projectionPaint(intersection, scaledRadius, brushColor);
+            }
         }
     }
 
@@ -107,7 +124,9 @@ export default function PaintableModel(props: {
     const onCentered = ({ container, boundingBox }: { container: THREE.Object3D; boundingBox: THREE.Box3 }) => {
         const DESIRED_SIZE = 5;
         const maxSize = boundingBox.getSize(new THREE.Vector3()).length();
-        container.scale.setScalar(DESIRED_SIZE / maxSize);
+        const scale = DESIRED_SIZE / maxSize;
+        setGlobalScale(scale);
+        container.scale.setScalar(scale);
     }
 
     const group: RefObject<THREE.Group> = useRef<THREE.Group>() as RefObject<THREE.Group>;

@@ -1,64 +1,44 @@
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {OrbitControls, PerspectiveCamera} from "@react-three/drei"
 import statusStore from "../store"
 import { useZustand } from 'use-zustand';
 import PaintableModel from './PaintableModel';
+import Buttons from './Buttons';
+import { useRef } from 'react';
+import * as THREE from 'three';
+
+function DirectionalLightWithHelper() {
+    const lightRef = useRef<THREE.DirectionalLight>(null!);
+    const { camera } = useThree();
+
+    // Update light position to follow camera
+    useFrame(() => {
+        if (lightRef.current) {
+            // Position light at the camera position
+            lightRef.current.position.copy(camera.position);
+        }
+    });
+
+    return (
+        <directionalLight
+            ref={lightRef}
+            color={'#ddd'}
+            intensity={0.8}
+            position={[0, 0, 10]}
+        />
+    );
+}
 
 function ActivityView() {
 
     const enableControls = useZustand(statusStore, (state) => state.enableControls);
-    const setEnableControls = useZustand(statusStore, (state) => state.setEnableControls)
-    const setColor = useZustand(statusStore, (state) => state.setColor)
-
     const color = useZustand(statusStore, (state) => state.clr);
+    const radius = useZustand(statusStore, (state) => state.radius);
 
-    const onClick = ()=>{
-        setEnableControls(!enableControls)
-    }
-
-    const onClear = ()=>{
-        debugger;
-        //assetRef.current!.clear()
-    }
-
+   
     return <div id="canvas-container-activity">
-        <button className='top-button'
-            style={{
-                left:0
-            }}
-            onClick={onClick}
-        >
-            Toggle rotate/draw mode
-        </button>
-
-        <button className='top-button'
-            style={{
-                left:250
-            }}
-            onClick={onClear}
-        >
-            Clear
-        </button>
-
-        <button className='top-button'
-            style={{
-                left:340
-            }}
-            onClick={()=>setColor('red')}
-        >
-            Red
-        </button>
-
-        <button className='top-button'
-            style={{
-                left:420
-            }}
-            onClick={()=>setColor('green')}
-        >
-            Green
-        </button>
-
-        <Canvas shadows >
+        <Buttons/>
+        <Canvas>
             <PerspectiveCamera
                 makeDefault
                 fov={50}
@@ -66,22 +46,16 @@ function ActivityView() {
             />
             
             <ambientLight
-                color={'#aaa'} 
+                color={'#aaa'}
                 intensity={0.5}
             />
-            
-            <directionalLight
-                color={'#ddd'}
-                intensity={0.5}
-                position={[3, 3, 3]}
-            />
+
+            <DirectionalLightWithHelper />
             
             <PaintableModel
                 enabled={!enableControls} 
-                url="/assets/Got_lq2.obj" 
-                position={[0, -2, 0]}
                 brushColor={color}
-                brushRadius={0.02}
+                brushRadius={radius}
             />
             
             <OrbitControls enabled={enableControls}/>

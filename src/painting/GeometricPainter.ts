@@ -2,27 +2,78 @@ import * as THREE from "three"
 import { generateDiskSamples } from "./Samples";
 import { IPainter } from "../types";
 
-const textureSize = 512;
-
 export class GeometricPainter implements IPainter{
     constructor(private pickableObjects:THREE.Mesh[], private raycaster: THREE.Raycaster, private textures: THREE.CanvasTexture[]){
 
     }
 
-    private paintOnTextureAtPoint(uv: { x: number; y: number }, texture: THREE.CanvasTexture, color:string, intensity:number):void{
+    public fillFace(intersection: THREE.Intersection, color: string): void {
+        if (!intersection || !intersection.face) return;
+
+        const hitMesh = intersection.object as THREE.Mesh;
+        const face = intersection.face;
+
+        // Find the texture index for this mesh
+        const textureIndex = this.pickableObjects.findIndex(obj => obj.uuid === hitMesh.uuid);
+        if (textureIndex === -1) return;
+        const texture = this.textures[textureIndex];
+
+        // Get geometry and UV attributes
+        const geometry = hitMesh.geometry;
+        const uvAttribute = geometry.getAttribute('uv');
+
+        if (!uvAttribute) return;
+
+        // Get the canvas and context
+        const canvas = texture.image;
+        const context = canvas.getContext('2d');
+        if (!context) return;
+
+        const textureWidth = canvas.width;
+        const textureHeight = canvas.height;
+
+        // Get UV coordinates for the three vertices of the face
+        const uv1 = new THREE.Vector2().fromBufferAttribute(uvAttribute, face.a);
+        const uv2 = new THREE.Vector2().fromBufferAttribute(uvAttribute, face.b);
+        const uv3 = new THREE.Vector2().fromBufferAttribute(uvAttribute, face.c);
+
+        // Convert UV coordinates to texture pixel coordinates
+        const x1 = uv1.x * textureWidth;
+        const y1 = (1 - uv1.y) * textureHeight;
+        const x2 = uv2.x * textureWidth;
+        const y2 = (1 - uv2.y) * textureHeight;
+        const x3 = uv3.x * textureWidth;
+        const y3 = (1 - uv3.y) * textureHeight;
+
+        // Draw filled triangle
+        context.fillStyle = color;
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        context.lineTo(x3, y3);
+        context.closePath();
+        context.fill();
+
+        // Mark texture for update
+        texture.needsUpdate = true;
+    }
+
+    private paintOnTextureAtPoint(uv: { x: number; y: number }, texture: THREE.CanvasTexture, color:string, intensity:number, brushSize:number):void {
         if (!uv) return;
-    
-        const brushSize = 2;
-        
-        const x = Math.floor(uv.x * textureSize);
-        const y = Math.floor((1 - uv.y) * textureSize);
-        
+
         // Get the texture canvas and context
         const canvas = texture.image;
         const context = canvas.getContext('2d');
-        
+
         if (!context) return;
-        
+
+        // Get actual texture dimensions
+        const textureWidth = canvas.width;
+        const textureHeight = canvas.height;
+
+        const x = Math.floor(uv.x * textureWidth);
+        const y = Math.floor((1 - uv.y) * textureHeight);
+
         // Use color with variable intensity
         context.globalAlpha = intensity;
         context.fillStyle = color;
@@ -47,15 +98,17 @@ export class GeometricPainter implements IPainter{
         const hitPoint = intersection.point;
         const hitNormal = intersection.face.normal.clone();
         hitNormal.transformDirection(hitMesh.matrixWorld);
-        
+
         // Find the texture index for this mesh
         const textureIndex = this.pickableObjects.findIndex(obj => obj.uuid === hitMesh.uuid);
         if (textureIndex === -1) return;
         const texture = this.textures[textureIndex];
-        
+
+        const brushSize = Math.max(1, radius);
+
         // Track painted UVs to prevent painting the same UV point multiple times
         const paintedUVs = new Set<string>();
-        
+
         // Sample all points within brush radius on the plane
         const samples = generateDiskSamples(hitPoint, hitNormal, radius, 5);
         
@@ -95,7 +148,7 @@ export class GeometricPainter implements IPainter{
                     }
                     
                     // Paint at this intersection's UV coordinate
-                    this.paintOnTextureAtPoint(sampleIntersection.uv, texture, color, intensityFactor);
+                    this.paintOnTextureAtPoint(sampleIntersection.uv, texture, color, intensityFactor, brushSize);
                 }
             }
         }

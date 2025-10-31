@@ -1,20 +1,30 @@
 import { createStore } from 'zustand/vanilla'
 
 type State = {
-    activity: string | null
     enableControls: boolean,
     clr:string,
+    radius?: number,
+
     setColor:(clr: string)=>void
+    setRadius:(radius: number)=>void
     setEnableControls:(enableControls:boolean) => void
-    setActivity: (activity:string) => void
-    exitActivity:()=>void
 }
 
 const statusStore = createStore<State>((set) => {
     return {
-        activity: null,
-        enableControls: false,
-        clr: "orange",
+        
+        enableControls: true,
+        clr: "red",
+        radius: 0.0025,
+
+        setRadius:(radius: number)=>{
+            return set((state: State)=>{
+                return {
+                    ...state,
+                    radius
+                }
+            })
+        },
         setColor:(clr: string)=>{
             return set((state: State)=>{
                 return {
@@ -28,22 +38,6 @@ const statusStore = createStore<State>((set) => {
                 return {
                     ...state,
                     enableControls
-                }
-            })
-        },
-        setActivity: (activity:string) => {
-            return set((state: State)=>{
-                return {
-                    ...state,
-                    activity
-                }
-            })
-        },
-        exitActivity:()=>{
-            return set((state: State)=>{
-                return {
-                    ...state,
-                    activity: null
                 }
             })
         }
