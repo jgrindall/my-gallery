@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {OrbitControls, PerspectiveCamera} from "@react-three/drei"
-import statusStore from "../store"
+import paintStore from "../paintStore"
 import { useZustand } from 'use-zustand';
 import PaintableModel from './PaintableModel';
 import Buttons from './Buttons';
@@ -23,17 +23,17 @@ function DirectionalLightWithHelper() {
         <directionalLight
             ref={lightRef}
             color={'#ddd'}
-            intensity={0.8}
-            position={[0, 0, 10]}
+            intensity={0.85}
+            position={[0, 0, 5]}
         />
     );
 }
 
 function ActivityView() {
 
-    const enableControls = useZustand(statusStore, (state) => state.enableControls);
-    const color = useZustand(statusStore, (state) => state.clr);
-    const radius = useZustand(statusStore, (state) => state.radius);
+    const enableControls = useZustand(paintStore, (state) => state.enableControls);
+    const color = useZustand(paintStore, (state) => state.clr);
+    const radius = useZustand(paintStore, (state) => state.radius);
 
    
     return <div id="canvas-container-activity">
@@ -46,8 +46,8 @@ function ActivityView() {
             />
             
             <ambientLight
-                color={'#aaa'}
-                intensity={0.5}
+                color={'#ddd'}
+                intensity={0.85}
             />
 
             <DirectionalLightWithHelper />

@@ -1,5 +1,5 @@
 import { useZustand } from 'use-zustand';
-import statusStore from "../store"
+import paintStore from "../paintStore"
 
 const buttons = [
     {label: 'Red', color: 'red'},
@@ -12,9 +12,9 @@ const buttons = [
 
 export default function Buttons(props: {}) {
 
-    const enableControls = useZustand(statusStore, (state) => state.enableControls);
-    const setEnableControls = useZustand(statusStore, (state) => state.setEnableControls)
-    const setColor = useZustand(statusStore, (state) => state.setColor)
+    const enableControls = useZustand(paintStore, (state) => state.enableControls);
+    const setEnableControls = useZustand(paintStore, (state) => state.setEnableControls)
+    const setColor = useZustand(paintStore, (state) => state.setColor)
 
     const onClick = ()=>{
         setEnableControls(!enableControls)

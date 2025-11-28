@@ -11,6 +11,7 @@ export type MeshInfo = {
 export interface IPainter {
     projectionPaint(intersection: THREE.Intersection, radius: number, color: string): void;
     fillFace(intersection: THREE.Intersection, color: string): void;
+    replaceColor(meshIndex: number, fromColor: string, toColor: string, tolerance?: number): void;
 }
 
 export type VaseProps = {

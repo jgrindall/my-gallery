@@ -10,12 +10,12 @@ type State = {
     setEnableControls:(enableControls:boolean) => void
 }
 
-const statusStore = createStore<State>((set) => {
+const paintStore = createStore<State>((set) => {
     return {
         
         enableControls: true,
         clr: "red",
-        radius: 0.0025,
+        radius: 0.00075,
 
         setRadius:(radius: number)=>{
             return set((state: State)=>{
@@ -44,5 +44,5 @@ const statusStore = createStore<State>((set) => {
     }
 })
 
-export default statusStore
+export default paintStore
 

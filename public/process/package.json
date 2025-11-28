@@ -1,0 +1,21 @@
+{
+  "name": "models",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "optimize glb/tf files",
+  "scripts": {},
+  "dependencies": {
+    "@gltf-transform/core": "^4.2.1",
+    "@gltf-transform/functions": "^4.2.1",
+    "express": "^5.1.0",
+    "fbx2gltf": "^0.9.7-p1",
+    "glob": "^11.0.3",
+    "meshoptimizer": "^0.25.0",
+    "puppeteer": "^24.25.0",
+    "rimraf": "^6.0.1",
+    "watlas": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1"
+  }
+}

@@ -15,6 +15,10 @@ body{
 .controls{
     display: flex;
     gap: 24px;
+    position:absolute;
+    bottom:10px;
+    left:0;
+    width:100%;
 }
 
 #canvas-container-activity{
