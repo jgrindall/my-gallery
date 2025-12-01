@@ -202,8 +202,13 @@ export class GeometricPainter implements IPainter{
                     const distanceToCenter = sample.distanceTo(hitPoint);
                     const intensityFactor = Math.max(0, 1 - (distanceToCenter / radius3D));
 
-                    // If the hit point is too far from the original point, skip it
+                    // Check both ray distance and 3D surface distance to avoid painting on distant UV islands
                     if (sampleIntersection.distance > radius3D * 0.6) continue;
+
+                    // Check the actual 3D distance from the original hit point to the sample intersection
+                    // This prevents painting on parts that are close in UV space but far in 3D space
+                    const surfaceDistance = sampleIntersection.point.distanceTo(hitPoint);
+                    if (surfaceDistance > radius3D * 1.5) continue;
 
                     // Paint at this intersection's UV coordinate with pixel-space brush size
                     this.paintOnTextureAtPoint(sampleIntersection.uv, texture, color, intensityFactor, brushSizePixels);

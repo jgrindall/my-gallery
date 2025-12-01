@@ -118,10 +118,11 @@ export const optimizeGLTF = async (inputPath: string, outputPath: string) => {
 
 		// Create one white texture for the combined mesh
 		(doc) => {
-			// Create a single 512x512 white texture
+			// Create a larger texture for better resolution and padding effectiveness
+			const textureSize = 1024;
 			const texture = doc.createTexture('WhitePaintingTexture')
 				.setMimeType('image/png')
-				.setImage(new Uint8Array(512 * 512 * 4).fill(255)); // All white RGBA
+				.setImage(new Uint8Array(textureSize * textureSize * 4).fill(255)); // All white RGBA
 
 			// Apply to all materials
 			doc.getRoot().listMaterials().forEach(material => {

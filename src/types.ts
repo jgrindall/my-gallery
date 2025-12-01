@@ -1,11 +1,13 @@
 import { Vector3Tuple } from "three"
 import * as THREE from "three"
+import { FloodFillPainter } from "./painting/FloodFillPainter"
 
 export type MeshInfo = {
     pickableObjects: THREE.Mesh[],
     raycaster: THREE.Raycaster,
     textures: THREE.CanvasTexture[],
     painter: IPainter,
+    floodFillPainter: FloodFillPainter,
 }
 
 export interface IPainter {

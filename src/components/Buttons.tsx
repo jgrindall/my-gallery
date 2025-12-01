@@ -15,6 +15,8 @@ export default function Buttons(props: {}) {
     const enableControls = useZustand(paintStore, (state) => state.enableControls);
     const setEnableControls = useZustand(paintStore, (state) => state.setEnableControls)
     const setColor = useZustand(paintStore, (state) => state.setColor)
+    const selectedTool = useZustand(paintStore, (state) => state.selectedTool)
+    const setSelectedTool = useZustand(paintStore, (state) => state.setSelectedTool)
 
     const onClick = ()=>{
         setEnableControls(!enableControls)
@@ -36,6 +38,16 @@ export default function Buttons(props: {}) {
                 {button.label}
             </button>
         ))}
+
+        <button
+            className='top-button'
+            onClick={() => setSelectedTool(selectedTool === 'paint' ? 'fill' : 'paint')}
+            style={{
+                fontWeight: 'bold'
+            }}
+        >
+            Tool: {selectedTool === 'paint' ? '🖌️ Paint' : '🪣 Fill'}
+        </button>
 
          <button className='top-button'
             style={{

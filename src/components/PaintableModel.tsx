@@ -3,9 +3,12 @@ import * as THREE from "three"
 import { useState, useMemo, useEffect, RefObject, useRef} from "react"
 import { getPaintingTexture } from "../painting/PaintingTexture";
 import { GeometricPainter } from "../painting/GeometricPainter";
+import { FloodFillPainter } from "../painting/FloodFillPainter";
 import type { MeshInfo } from '../types';
 import { useLoader, ThreeEvent, useThree} from "@react-three/fiber"
 import {Center} from "@react-three/drei"
+import { useZustand } from 'use-zustand';
+import paintStore from "../paintStore"
 
 // Helper function to copy a texture to a canvas
 function copyTextureToCanvas(texture: THREE.Texture, width: number, height: number, renderer: THREE.WebGLRenderer): THREE.CanvasTexture {
@@ -77,11 +80,11 @@ function copyTextureToCanvas(texture: THREE.Texture, width: number, height: numb
 }
 
 export default function PaintableModel(props: {
-    enabled?: boolean, 
+    enabled?: boolean,
     brushColor?: string,
     brushRadius?: number
 }) {
-    
+
     const url = "process/public/mushnub2-opt.glb";
 
     const brushColor = props.brushColor || "red"
@@ -91,6 +94,8 @@ export default function PaintableModel(props: {
 
     const [drawing, setDrawing] = useState(false)
     const {camera, gl} = useThree()
+
+    const selectedTool = useZustand(paintStore, (state) => state.selectedTool)
 
     const [globalScale, setGlobalScale] = useState(1);
 
@@ -188,12 +193,14 @@ export default function PaintableModel(props: {
         });
 
         const painter = new GeometricPainter(pickableObjects, raycaster, textures);
+        const floodFillPainter = new FloodFillPainter(pickableObjects, textures);
 
         return {
             pickableObjects,
             raycaster,
             textures,
-            painter
+            painter,
+            floodFillPainter
         }
     }, [gltf, raycaster]);
 
@@ -234,10 +241,14 @@ export default function PaintableModel(props: {
         // Paint on all nearby unique meshes
         for (const intersection of uniqueIntersections) {
             if (intersection.object instanceof THREE.Mesh) {
-                // If Shift key is held, fill the entire face
-                if (e.shiftKey) {
+                if (selectedTool === 'fill') {
+                    // Flood fill mode
+                    meshInfo.floodFillPainter.floodFill(intersection, brushColor, 30);
+                } else if (e.shiftKey) {
+                    // Shift key fills the entire face
                     meshInfo.painter.fillFace(intersection, brushColor);
                 } else {
+                    // Normal paint mode
                     meshInfo.painter.projectionPaint(intersection, scaledRadius, brushColor);
                 }
             }
