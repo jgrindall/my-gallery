@@ -48,7 +48,7 @@ export default function Buttons(props: {}) {
             }}
             onClick={onClick}
         >
-            Toggle rotate/draw mode
+            {enableControls ? 'Pan/zoom' : 'Paint'}
         </button>
 
         <div style={{ marginBottom: '10px' }}>

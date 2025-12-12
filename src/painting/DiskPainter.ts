@@ -1,7 +1,8 @@
 import * as THREE from "three"
-import { generateScreenDiskSamples } from "./Samples";
+import { generateScreenDiskSamples } from "./DiskSamples";
 import { IPainter } from "../types";
 
+const BRUSH_RADIUS_GLOBAL_SCALE = 2.5;
 export class DiskPainter implements IPainter{
 
     constructor(
@@ -27,8 +28,8 @@ export class DiskPainter implements IPainter{
 
         context.fillStyle = color;
 
-        const radius = Math.max(1, brushSize);// dont draw with 0 radius
-        
+        const radius = Math.max(1, Math.round(brushSize));// dont draw with 0 radius
+
         context.beginPath();
         context.arc(x, y, radius, 0, 2 * Math.PI);
         context.fill();
@@ -51,9 +52,6 @@ export class DiskPainter implements IPainter{
         const canvas = texture.image as HTMLCanvasElement;
         const textureSize = Math.max(canvas.width, canvas.height);
 
-        // ultra-microscopic dots, massive quantity
-        const BRUSH_RADIUS_GLOBAL_SCALE = 1.5;
-        
         const brushSizePixels = Math.max(1, radius * textureSize * BRUSH_RADIUS_GLOBAL_SCALE);
 
         // screen radius should scale with brush radius

@@ -1,6 +1,6 @@
 import * as THREE from "three"
 
-const DEBUG = true;
+const DEBUG = false;
 
 const drawDebugGrid = (textureContext: CanvasRenderingContext2D, width: number, height: number)=>{
     const gridSize = 64; // grid cell size in pixels
