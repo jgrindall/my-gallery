@@ -1,7 +1,7 @@
 import * as THREE from "three"
 
-const MIN_POINTS_PER_RING = 8;
-const MAX_POINTS_PER_RING = 16;
+const MIN_POINTS_PER_RING = 12;
+const MAX_POINTS_PER_RING = 32;
 
 // generate screen-space disk samples (2D normalized device coordinates)
 export const generateScreenDiskSamples = (radius: number, ringCount: number): THREE.Vector2[] => {

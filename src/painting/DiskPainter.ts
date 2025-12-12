@@ -51,8 +51,8 @@ export class DiskPainter implements IPainter{
         const canvas = texture.image as HTMLCanvasElement;
         const textureSize = Math.max(canvas.width, canvas.height);
 
-        // microscopic dots, tons of them
-        const BRUSH_RADIUS_GLOBAL_SCALE = 2;
+        // ultra-microscopic dots, massive quantity
+        const BRUSH_RADIUS_GLOBAL_SCALE = 1.5;
         
         const brushSizePixels = Math.max(1, radius * textureSize * BRUSH_RADIUS_GLOBAL_SCALE);
 
@@ -60,7 +60,7 @@ export class DiskPainter implements IPainter{
         const SCREEN_RADIUS_SCALE = 30;
         const screenRadius = radius * SCREEN_RADIUS_SCALE;
         // more rings = more samples
-        const diskSamples = generateScreenDiskSamples(screenRadius, 20);
+        const diskSamples = generateScreenDiskSamples(screenRadius, 25);
 
         // raycast from camera through screen-space disk samples
         for (const offset of diskSamples) {
