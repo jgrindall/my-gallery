@@ -19,7 +19,7 @@ export type VaseProps = {
     size: number
 }
 
-export type MeshType = 'plane' | 'sphere' | 'cylinder';
+export type MeshType = 'cube' | 'plane' | 'sphere' | 'cylinder' | 'gltf';
 
 export type MeshData = {
     id: string;
@@ -27,4 +27,5 @@ export type MeshData = {
     position: Vector3Tuple;
     scale: number;
     rotation?: Vector3Tuple;
+    url?: string; // for gltf models
 }

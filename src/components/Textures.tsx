@@ -23,11 +23,11 @@ export function copyTextureToCanvas(texture: THREE.Texture, width: number, heigh
             renderer.render(scene, camera);
             renderer.setRenderTarget(null);
 
-            // Read pixels from render target
+            // read pixels
             const pixels = new Uint8Array(width * height * 4);
             renderer.readRenderTargetPixels(renderTarget, 0, 0, width, height, pixels);
 
-            // Put pixels onto canvas
+            // draw
             const imageData = ctx.createImageData(width, height);
             imageData.data.set(pixels);
             ctx.putImageData(imageData, 0, 0);
@@ -46,7 +46,8 @@ export function copyTextureToCanvas(texture: THREE.Texture, width: number, heigh
             renderTarget.dispose();
             geometry.dispose();
             material.dispose();
-        } catch (e) {
+        } 
+        catch (e) {
             console.warn('Failed to copy texture via WebGL, trying direct draw', e);
             // Fallback: try direct draw if it's a valid HTMLImageElement or similar
             try {
@@ -57,14 +58,16 @@ export function copyTextureToCanvas(texture: THREE.Texture, width: number, heigh
                 } else {
                     throw new Error('Unsupported image type');
                 }
-            } catch (e2) {
+            }
+            catch (e2) {
                 console.warn('Failed to draw texture image directly, using white background', e2);
                 // Last resort: white background
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, width, height);
             }
         }
-    } else {
+    }
+    else {
         // No valid image, fill with white
         console.warn('Texture image not ready or invalid, using white background');
         ctx.fillStyle = '#ffffff';

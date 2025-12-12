@@ -54,21 +54,24 @@ function ActivityView() {
 
             <DirectionalLightWithHelper />
             
-            <PaintableModel
-                enabled={!enableControls} 
-                brushColor={color}
-                brushRadius={radius}
-                url={"process/public/mushnub2-opt.glb"}
-            />
-
             {meshes.map((meshData) => (
-                <PaintableMesh
-                    key={meshData.id}
-                    meshData={meshData}
-                    enabled={!enableControls}
-                    brushColor={color}
-                    brushRadius={radius}
-                />
+                meshData.type === 'gltf' ? (
+                    <PaintableModel
+                        key={meshData.id}
+                        enabled={!enableControls}
+                        brushColor={color}
+                        brushRadius={radius}
+                        url={meshData.url!}
+                    />
+                ) : (
+                    <PaintableMesh
+                        key={meshData.id}
+                        meshData={meshData}
+                        enabled={!enableControls}
+                        brushColor={color}
+                        brushRadius={radius}
+                    />
+                )
             ))}
             
             <OrbitControls enabled={enableControls}/>

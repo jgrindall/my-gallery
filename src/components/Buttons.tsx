@@ -11,10 +11,12 @@ const buttons = [
     {label: 'Black', color: 'black'},
 ]
 
-const meshTypes: { label: string, type: MeshType }[] = [
-    { label: 'Square', type: 'plane' },
+const meshTypes: { label: string, type: MeshType, url?: string }[] = [
+    { label: 'Cube', type: 'cube' },
     { label: 'Sphere', type: 'sphere' },
-    { label: 'Cylinder', type: 'cylinder' }
+    { label: 'Cylinder', type: 'cylinder' },
+    { label: 'Wolf', type: 'gltf', url: 'process/public/wolf3-opt.glb' },
+    { label: 'Penguin', type: 'gltf', url: 'process/public/penguin-opt.glb' }
 ]
 
 export default function Buttons(props: {}) {
@@ -54,9 +56,9 @@ export default function Buttons(props: {}) {
             <strong>Add Mesh:</strong>
             {meshTypes.map((mesh) => (
                 <button
-                    key={mesh.type}
+                    key={mesh.label}
                     className='top-button'
-                    onClick={() => addMesh(mesh.type)}
+                    onClick={() => addMesh(mesh.type, mesh.url)}
                 >
                     {mesh.label}
                 </button>

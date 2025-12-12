@@ -14,7 +14,7 @@ type State = {
     setRadius:(radius: number)=>void
     setEnableControls:(enableControls:boolean) => void
     setSelectedTool:(tool: PaintTool) => void
-    addMesh:(type: MeshType) => void
+    addMesh:(type: MeshType, url?: string) => void
     removeMesh:(id: string) => void
 }
 
@@ -59,11 +59,24 @@ const paintStore = createStore<State>((set) => {
                 }
             })
         },
-        addMesh: (type: MeshType) => {
+        addMesh: (type: MeshType, url?: string) => {
             return set((state: State) => {
                 const newMeshes: MeshData[] = [];
                 
-                if (type === 'plane') {
+                if (type === 'gltf' && url) {
+                    // add a gltf model
+                    newMeshes.push({
+                        id: `gltf-${Date.now()}`,
+                        type,
+                        position: [
+                            (Math.random() - 0.5) * 4,
+                            (Math.random() - 0.5) * 4,
+                            (Math.random() - 0.5) * 4
+                        ],
+                        scale: 1,
+                        url
+                    });
+                } else if (type === 'cube') {
                     // add 6 planes arranged like a cube's faces
                     const timestamp = Date.now();
                     const centerPos: [number, number, number] = [
