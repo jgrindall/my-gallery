@@ -1,10 +1,15 @@
 import * as THREE from "three"
-import { generateDiskSamples } from "./Samples";
+import { generateScreenDiskSamples } from "./Samples";
 import { IPainter } from "../types";
 
 export class DiskPainter implements IPainter{
 
-    constructor(private pickableObjects:THREE.Mesh[], private raycaster: THREE.Raycaster, private textures: THREE.CanvasTexture[]){
+    constructor(
+        private meshes: THREE.Mesh[], 
+        private raycaster: THREE.Raycaster, 
+        private textures: THREE.CanvasTexture[],
+        private camera: THREE.Camera
+    ){
 
     }
 
@@ -20,7 +25,6 @@ export class DiskPainter implements IPainter{
         const x = Math.floor(uv.x * textureWidth);
         const y = Math.floor((1 - uv.y) * textureHeight);
 
-        // use color with variable intensity
         context.fillStyle = color;
 
         const radius = Math.max(1, brushSize);// dont draw with 0 radius
@@ -28,21 +32,16 @@ export class DiskPainter implements IPainter{
         context.beginPath();
         context.arc(x, y, radius, 0, 2 * Math.PI);
         context.fill();
-    
-        context.globalAlpha = 1.0;
         
         texture.needsUpdate = true;
     }
 
-    public paint(intersection: THREE.Intersection, radius: number, color: string): void {
+    public paint(intersection: THREE.Intersection, radius: number, color: string, pointerPosition: THREE.Vector2): void {
         if (!intersection || !intersection.face) return;
 
         const hitMesh = intersection.object as THREE.Mesh;
-        const hitPoint = intersection.point;
-        const hitNormal = intersection.face.normal.clone();
-        hitNormal.transformDirection(hitMesh.matrixWorld);
 
-        const textureIndex = this.pickableObjects.findIndex(obj => obj.uuid === hitMesh.uuid);
+        const textureIndex = this.meshes.findIndex(obj => obj.uuid === hitMesh.uuid);
         if (textureIndex === -1){
             return;
         }
@@ -52,40 +51,48 @@ export class DiskPainter implements IPainter{
         const canvas = texture.image as HTMLCanvasElement;
         const textureSize = Math.max(canvas.width, canvas.height);
 
-        const GLOBAL_SCALE = 50;
+        // microscopic dots, tons of them
+        const BRUSH_RADIUS_GLOBAL_SCALE = 2;
         
-        const brushSizePixels = Math.max(1, radius * textureSize * GLOBAL_SCALE);
+        const brushSizePixels = Math.max(1, radius * textureSize * BRUSH_RADIUS_GLOBAL_SCALE);
 
-        const samples = generateDiskSamples(hitPoint, hitNormal, radius, 5);
+        // screen radius should scale with brush radius
+        const SCREEN_RADIUS_SCALE = 30;
+        const screenRadius = radius * SCREEN_RADIUS_SCALE;
+        // more rings = more samples
+        const diskSamples = generateScreenDiskSamples(screenRadius, 20);
 
-        // raycast to find the closest point on the mesh
-        for (const point3d of samples) {
-            
-            // create a ray starting slightly above the sample point pointing toward the mesh
-            // using a smaller offset to avoid overshooting thin geometry
+        // raycast from camera through screen-space disk samples
+        for (const offset of diskSamples) {
+            // add offset to pointer position
+            const samplePointer = new THREE.Vector2(
+                pointerPosition.x + offset.x,
+                pointerPosition.y + offset.y
+            );
 
-            const rayOrigin = point3d.clone().add(hitNormal.clone().multiplyScalar(radius * 0.3));
-            const rayDirection = hitNormal.clone().negate();
-
-            this.raycaster.set(rayOrigin, rayDirection);
+            // shoot ray from camera through this position and see what we hit
+            this.raycaster.setFromCamera(samplePointer, this.camera);
 
             const sampleIntersects = this.raycaster.intersectObject(hitMesh);
 
             if (sampleIntersects.length > 0) {
                 const sampleIntersection = sampleIntersects[0];
-                if (sampleIntersection.uv) {
+                
+                if (sampleIntersection.uv && sampleIntersection.face) {
+                    // get the face normal in world space
+                    const normal = sampleIntersection.face.normal.clone();
+                    normal.transformDirection(hitMesh.matrixWorld);
                     
-                    if (sampleIntersection.distance > radius * 0.6){
-                        continue;
+                    // get ray direction (camera to surface)
+                    const rayDir = this.raycaster.ray.direction.clone().normalize();
+                    
+                    // only paint if surface is facing camera (dot product < 0)
+                    const facingCamera = normal.dot(rayDir) < 0;
+                    
+                    if (facingCamera) {
+                        // paint!
+                        this.paintOnTextureAtPoint(sampleIntersection.uv, texture, color, brushSizePixels);
                     }
-
-                    const surfaceDistance = sampleIntersection.point.distanceTo(hitPoint);
-                    if (surfaceDistance > radius * 1.5){
-                        continue;
-                    }
-
-                    // paint!
-                    this.paintOnTextureAtPoint(sampleIntersection.uv, texture, color, brushSizePixels);
                 }
             }
         }

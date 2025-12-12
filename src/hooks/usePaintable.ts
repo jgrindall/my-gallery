@@ -1,7 +1,6 @@
 import * as THREE from "three"
 import { useState, useMemo, useEffect } from "react"
 import { DiskPainter } from "../painting/DiskPainter";
-import { FloodFillPainter } from "../painting/FloodFillPainter";
 import type { MeshInfo } from '../types';
 import { ThreeEvent, useThree } from "@react-three/fiber"
 
@@ -27,23 +26,21 @@ export function usePaintable(
     }, []);
 
     const meshInfo: MeshInfo = useMemo(() => {
-        const painter = new DiskPainter(meshes, raycaster, textures);
-        const floodFillPainter = new FloodFillPainter(meshes, textures);
+        const painter = new DiskPainter(meshes, raycaster, textures, camera);
 
         return {
-            pickableObjects: meshes,
+            meshes,
             raycaster,
             textures,
-            painter,
-            floodFillPainter
+            painter
         };
-    }, [meshes, textures, raycaster]);
+    }, [meshes, textures, raycaster, camera]);
 
     const handleDraw = (e: ThreeEvent<PointerEvent>) => {
         const pointer = new THREE.Vector2(e.pointer.x, e.pointer.y);
 
         raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects(meshInfo.pickableObjects, false);
+        const intersects = raycaster.intersectObjects(meshInfo.meshes, false);
 
         if (intersects.length === 0) {
             // you didnt hot anything
@@ -55,11 +52,11 @@ export function usePaintable(
         // scale brush radius based on camera distance
         const cameraDistance = camera.position.length();
         const DISTANCE_SCALE = 10;
-        
+
         const radiusScale = cameraDistance / DISTANCE_SCALE;
         const scaledRadius = brushRadius * scaleMultiplier * radiusScale;
 
-        meshInfo.painter.paint(intersection, scaledRadius, brushColor);
+        meshInfo.painter.paint(intersection, scaledRadius, brushColor, pointer);
     }
 
     const onPointerMove = (e: ThreeEvent<PointerEvent>) => {

@@ -1,17 +1,15 @@
 import { Vector3Tuple } from "three"
 import * as THREE from "three"
-import { FloodFillPainter } from "./painting/FloodFillPainter"
 
 export type MeshInfo = {
-    pickableObjects: THREE.Mesh[],
+    meshes: THREE.Mesh[],
     raycaster: THREE.Raycaster,
     textures: THREE.CanvasTexture[],
     painter: IPainter,
-    floodFillPainter: FloodFillPainter,
 }
 
 export interface IPainter {
-    paint(intersection: THREE.Intersection, radius: number, color: string): void;
+    paint(intersection: THREE.Intersection, radius: number, color: string, pointerPosition: THREE.Vector2): void;
 }
 
 export type VaseProps = {

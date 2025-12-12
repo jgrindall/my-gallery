@@ -1,4 +1,5 @@
 import * as THREE from "three"
+/**
 
 export class FloodFillPainter {
     constructor(
@@ -6,7 +7,7 @@ export class FloodFillPainter {
         private textures: THREE.CanvasTexture[]
     ) {}
 
-    public floodFill(intersection: THREE.Intersection, color: string, tolerance: number = 30): void {
+    public floodFill(intersection: THREE.Intersection, color: string, pointerPosition: THREE.Vector2, tolerance: number = 30): void {
         if (!intersection || !intersection.uv) return;
 
         const hitMesh = intersection.object as THREE.Mesh;
@@ -100,3 +101,5 @@ export class FloodFillPainter {
         return { r: data[0], g: data[1], b: data[2] };
     }
 }
+
+**/
