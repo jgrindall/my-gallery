@@ -3,6 +3,7 @@ import {OrbitControls, PerspectiveCamera} from "@react-three/drei"
 import paintStore from "../paintStore"
 import { useZustand } from 'use-zustand';
 import PaintableModel from './PaintableModel';
+import PaintableMesh from './PaintableMesh';
 import Buttons from './Buttons';
 import { useRef } from 'react';
 import * as THREE from 'three';
@@ -34,6 +35,7 @@ function ActivityView() {
     const enableControls = useZustand(paintStore, (state) => state.enableControls);
     const color = useZustand(paintStore, (state) => state.clr);
     const radius = useZustand(paintStore, (state) => state.radius);
+    const meshes = useZustand(paintStore, (state) => state.meshes);
 
    
     return <div id="canvas-container-activity">
@@ -56,7 +58,18 @@ function ActivityView() {
                 enabled={!enableControls} 
                 brushColor={color}
                 brushRadius={radius}
+                url={"process/public/mushnub2-opt.glb"}
             />
+
+            {meshes.map((meshData) => (
+                <PaintableMesh
+                    key={meshData.id}
+                    meshData={meshData}
+                    enabled={!enableControls}
+                    brushColor={color}
+                    brushRadius={radius}
+                />
+            ))}
             
             <OrbitControls enabled={enableControls}/>
         </Canvas>

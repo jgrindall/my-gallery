@@ -3,18 +3,15 @@ import * as THREE from "three"
 export const generateDiskSamples = (center: THREE.Vector3, normal: THREE.Vector3, radius: number, ringCount: number): THREE.Vector3[] => {
     const samples: THREE.Vector3[] = [];
     
-    // Add center point
-    samples.push(center.clone());
-    
-    // Create a coordinate system on the disk plane
-    const tangent = new THREE.Vector3(1, 0, 0);
-    if (Math.abs(normal.dot(tangent)) > 0.99) {
-        tangent.set(0, 1, 0);
+    // create a coordinate system on the disk plane
+    const tangent1 = new THREE.Vector3(1, 0, 0);
+    if (Math.abs(normal.dot(tangent1)) > 0.99) {
+        tangent1.set(0, 1, 0);
     }
-    const bitangent = new THREE.Vector3().crossVectors(normal, tangent).normalize();
-    tangent.crossVectors(bitangent, normal).normalize();
+    const tangent2 = new THREE.Vector3().crossVectors(normal, tangent1).normalize();
+    tangent1.crossVectors(tangent2, normal).normalize();
     
-    // Generate rings of samples
+    // generate rings of samples
     for (let r = 1; r <= ringCount; r++) {
         const ringRadius = (r / ringCount) * radius;
         const pointsInRing = Math.max(8, Math.floor(16 * (r / ringCount)));
@@ -25,11 +22,13 @@ export const generateDiskSamples = (center: THREE.Vector3, normal: THREE.Vector3
             const y = Math.sin(angle) * ringRadius;
             
             const sample = center.clone()
-                .add(tangent.clone().multiplyScalar(x))
-                .add(bitangent.clone().multiplyScalar(y));
+                .add(tangent1.clone().multiplyScalar(x))
+                .add(tangent2.clone().multiplyScalar(y));
             samples.push(sample);
         }
     }
+
+    samples.push(center.clone());
     
     return samples;
 }

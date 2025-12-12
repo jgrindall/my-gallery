@@ -21,38 +21,38 @@ export class FloodFillPainter {
         const width = canvas.width;
         const height = canvas.height;
 
-        // Convert UV to pixel coordinates
+        // convert UV to pixel coordinates
         const startX = Math.floor(intersection.uv.x * width);
         const startY = Math.floor((1 - intersection.uv.y) * height);
 
-        // Get image data
+        // get image data
         const imageData = ctx.getImageData(0, 0, width, height);
         const data = imageData.data;
 
-        // Get target color at click point
+        // get target color at click point
         const targetIdx = (startY * width + startX) * 4;
         const targetR = data[targetIdx];
         const targetG = data[targetIdx + 1];
         const targetB = data[targetIdx + 2];
 
-        // Parse fill color
+        // parse fill color
         const fillColor = this.parseColor(color);
 
-        // Don't fill if already the same color
+        // don't fill if already the same color
         if (Math.abs(targetR - fillColor.r) <= tolerance &&
             Math.abs(targetG - fillColor.g) <= tolerance &&
             Math.abs(targetB - fillColor.b) <= tolerance) {
             return;
         }
 
-        // Stack-based flood fill (faster than recursive)
+        // stack-based flood fill (faster than recursive)
         const stack: [number, number][] = [[startX, startY]];
         const visited = new Set<number>();
 
         while (stack.length > 0) {
             const [x, y] = stack.pop()!;
 
-            // Check bounds
+            // check bounds
             if (x < 0 || x >= width || y < 0 || y >= height) continue;
 
             const idx = y * width + x;
@@ -64,32 +64,32 @@ export class FloodFillPainter {
             const g = data[pixelIdx + 1];
             const b = data[pixelIdx + 2];
 
-            // Check if pixel matches target color within tolerance
+            // check if pixel matches target color within tolerance
             if (Math.abs(r - targetR) > tolerance ||
                 Math.abs(g - targetG) > tolerance ||
                 Math.abs(b - targetB) > tolerance) {
                 continue;
             }
 
-            // Fill this pixel
+            // fill this pixel
             data[pixelIdx] = fillColor.r;
             data[pixelIdx + 1] = fillColor.g;
             data[pixelIdx + 2] = fillColor.b;
 
-            // Add neighbors to stack
+            // add neighbors to stack
             stack.push([x + 1, y]);
             stack.push([x - 1, y]);
             stack.push([x, y + 1]);
             stack.push([x, y - 1]);
         }
 
-        // Put modified image data back
+        // put modified image data back
         ctx.putImageData(imageData, 0, 0);
         texture.needsUpdate = true;
     }
 
     private parseColor(color: string): { r: number; g: number; b: number } {
-        // Create a temporary canvas to parse the color
+        // create a temporary canvas to parse the color
         const canvas = document.createElement('canvas');
         canvas.width = 1;
         canvas.height = 1;
