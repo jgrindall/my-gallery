@@ -1,6 +1,7 @@
 import * as THREE from "three"
 import { useState, useMemo, useEffect } from "react"
 import { DiskPainter } from "../painting/DiskPainter";
+import { GeometricPainter } from "../painting/GeometricPainter";
 import type { MeshInfo } from '../types';
 import { ThreeEvent, useThree } from "@react-three/fiber"
 
@@ -10,7 +11,8 @@ export function usePaintable(
     brushRadius: number,
     meshes: THREE.Mesh[],
     textures: THREE.CanvasTexture[],
-    scaleMultiplier: number = 1
+    scaleMultiplier: number = 1,
+    tool: 'paint' | 'fill' = 'paint'
 ) {
     const [drawing, setDrawing] = useState(false)
     const { camera } = useThree()
@@ -25,16 +27,21 @@ export function usePaintable(
         return new THREE.Raycaster();
     }, []);
 
-    const meshInfo: MeshInfo = useMemo(() => {
-        const painter = new DiskPainter(meshes, raycaster, textures, camera);
+    const painters = useMemo(() => {
+        return {
+            paint: new DiskPainter(meshes, raycaster, textures, camera),
+            fill: new GeometricPainter(meshes, textures)
+        };
+    }, [meshes, textures, raycaster, camera]);
 
+    const meshInfo: MeshInfo = useMemo(() => {
         return {
             meshes,
             raycaster,
             textures,
-            painter
+            painter: painters[tool]
         };
-    }, [meshes, textures, raycaster, camera]);
+    }, [meshes, textures, raycaster, painters, tool]);
 
     const handleDraw = (e: ThreeEvent<PointerEvent>) => {
         const pointer = new THREE.Vector2(e.pointer.x, e.pointer.y);
@@ -56,7 +63,7 @@ export function usePaintable(
         const radiusScale = cameraDistance / DISTANCE_SCALE;
         const scaledRadius = brushRadius * scaleMultiplier * radiusScale;
 
-        meshInfo.painter.paint(intersection, scaledRadius, brushColor, pointer);
+        painters[tool].paint(intersection, scaledRadius, brushColor, pointer);
     }
 
     const onPointerMove = (e: ThreeEvent<PointerEvent>) => {

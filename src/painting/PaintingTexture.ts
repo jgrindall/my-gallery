@@ -38,17 +38,17 @@ const drawDebugGrid = (textureContext: CanvasRenderingContext2D, width: number, 
         textureContext!.stroke();
 }
 
-export const getPaintingTexture = (width: number = 512, height: number = 512) => {
+export const getPaintingTexture = (size: number = 1024) => {
     const textureCanvas = document.createElement('canvas');
-    textureCanvas.width = width;
-    textureCanvas.height = height;
+    textureCanvas.width = size;
+    textureCanvas.height = size;
     const textureContext = textureCanvas.getContext('2d');
 
     textureContext!.fillStyle = '#ffffff';
-    textureContext!.fillRect(0, 0, width, height);
+    textureContext!.fillRect(0, 0, size, size);
 
     if (DEBUG) {
-        drawDebugGrid(textureContext!, width, height);
+        drawDebugGrid(textureContext!, size, size);
         document.body.appendChild(textureCanvas);
     }
 

@@ -17,6 +17,8 @@ import {
 } from '@gltf-transform/functions';
 import * as watlas from 'watlas';
 import { MeshoptEncoder } from 'meshoptimizer';
+import { draw } from './draw'
+
 
 await MeshoptEncoder.ready;
 
@@ -24,7 +26,7 @@ const getSimplification = (): {simplificationRatio:number, simplificationError:n
 	return { simplificationRatio: 0.2, simplificationError: 0.0005 };
 }
 
-const TEXTURE_SIZE = 512;
+const TEXTURE_SIZE = 1024;
 
 const getWhiteTexture = (doc: Document, textureSize:number = TEXTURE_SIZE)=>{
 	const texture = doc.createTexture('WhitePaintingTexture')
@@ -114,7 +116,46 @@ export const optimizeGLTF = async (inputPath: string, outputPath: string) => {
 
 		// important one - generates uvs
 		unwrap({
-			watlas,
+			watlas: {
+				Initialize: watlas.Initialize,
+				Atlas: class extends watlas.Atlas {
+					computeCharts(options: any) {
+						super.computeCharts({
+							maxIterations: 5,
+							normalDeviationWeight: 2,
+							roundnessWeight: 0.01,
+							straightnessWeight: 6,
+							normalSeamWeight: 4,
+							textureSeamWeight: 0.5,
+							maxCost: 2,
+							maxChartArea: 0,
+							maxBoundaryLength: 0,
+							useInputMeshUvs: false,
+							fixWinding: false,
+							...options
+						});
+					}
+					generate(chartOptions: any, packOptions: any) {
+						super.generate({
+							maxIterations: 5,
+							normalDeviationWeight: 2,
+							roundnessWeight: 0.01,
+							straightnessWeight: 6,
+							normalSeamWeight: 4,
+							textureSeamWeight: 0.5,
+							maxCost: 2,
+							maxChartArea: 0,
+							maxBoundaryLength: 0,
+							useInputMeshUvs: false,
+							fixWinding: false,
+							...chartOptions
+						}, {
+							padding: 15,
+							...packOptions
+						});
+					}
+				}
+			} as any,
 		}),
 
 		(doc:Document) => {
@@ -151,6 +192,8 @@ export const optimizeGLTF = async (inputPath: string, outputPath: string) => {
 	);
 
 	outputPath = outputPath.replace('.', '-opt.').toLowerCase();
+
+	draw(document, outputPath);
 
 	await io.write(outputPath, document);
 }

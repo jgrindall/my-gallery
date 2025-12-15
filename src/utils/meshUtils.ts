@@ -1,8 +1,7 @@
 import * as THREE from "three"
 import { getPaintingTexture } from "../painting/PaintingTexture";
-import { copyTextureToCanvas } from "../components/Textures";
 
-const MIN_TEXTURE_SIZE = 512;
+const MIN_TEXTURE_SIZE = 1024;
 const MAX_TEXTURE_SIZE = 2048;
 
 export function createPaintableMaterial(paintingTexture: THREE.CanvasTexture): THREE.MeshStandardMaterial {
@@ -16,14 +15,14 @@ export function createPaintableMaterial(paintingTexture: THREE.CanvasTexture): T
 }
 
 // process a single mesh to make it paintable
-export function processMesh(mesh: THREE.Mesh, size: number = 512): THREE.CanvasTexture {
+export function processMesh(mesh: THREE.Mesh, size: number = 1024): THREE.CanvasTexture {
     // compute bounds tree for raycasting acceleration
     if (mesh.geometry && !mesh.geometry.boundsTree) {
         mesh.geometry.computeBoundsTree();
     }
 
     // create painting texture
-    const paintingTexture = getPaintingTexture(size, size);
+    const paintingTexture = getPaintingTexture(size);
 
     // create and assign material
     const material = createPaintableMaterial(paintingTexture);

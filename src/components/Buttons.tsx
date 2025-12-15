@@ -100,8 +100,7 @@ export default function Buttons(props: {}) {
             className='top-button'
             onClick={() => setSelectedTool(selectedTool === 'paint' ? 'fill' : 'paint')}
             style={{
-                fontWeight: 'bold',
-                display: 'none'
+                fontWeight: 'bold'
             }}
         >
             Tool: {selectedTool === 'paint' ? '🖌️ Paint' : '🪣 Fill'}

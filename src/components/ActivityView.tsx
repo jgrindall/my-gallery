@@ -36,6 +36,7 @@ function ActivityView() {
     const color = useZustand(paintStore, (state) => state.clr);
     const radius = useZustand(paintStore, (state) => state.radius);
     const meshes = useZustand(paintStore, (state) => state.meshes);
+    const selectedTool = useZustand(paintStore, (state) => state.selectedTool);
 
    
     return <div id="canvas-container-activity">
@@ -62,6 +63,7 @@ function ActivityView() {
                         brushColor={color}
                         brushRadius={radius}
                         url={meshData.url!}
+                        tool={selectedTool}
                     />
                 ) : (
                     <PaintableMesh
@@ -70,6 +72,7 @@ function ActivityView() {
                         enabled={!enableControls}
                         brushColor={color}
                         brushRadius={radius}
+                        tool={selectedTool}
                     />
                 )
             ))}

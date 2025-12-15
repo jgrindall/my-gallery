@@ -10,7 +10,8 @@ export default function PaintableModel(props: {
     enabled?: boolean,
     brushColor?: string,
     url:string,
-    brushRadius?: number
+    brushRadius?: number,
+    tool?: 'paint' | 'fill'
 }) {
 
     const brushColor = props.brushColor || "red"
@@ -31,7 +32,8 @@ export default function PaintableModel(props: {
         radius,
         meshes,
         textures,
-        globalScale
+        globalScale,
+        props.tool
     );
 
     const onCentered = ({ container, boundingBox }: { container: THREE.Object3D; boundingBox: THREE.Box3 }) => {

@@ -9,7 +9,8 @@ export default function PaintableMesh(props: {
     meshData: MeshData,
     enabled?: boolean,
     brushColor?: string,
-    brushRadius?: number
+    brushRadius?: number,
+    tool?: 'paint' | 'fill'
 }) {
     const { meshData } = props;
     const brushColor = props.brushColor || "red"
@@ -36,7 +37,8 @@ export default function PaintableMesh(props: {
         radius,
         [meshAndTexture.mesh],
         [meshAndTexture.paintingTexture],
-        meshData.scale
+        meshData.scale,
+        props.tool
     );
 
     return (
