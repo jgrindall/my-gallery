@@ -18,6 +18,7 @@ const meshTypes: { label: string, type: MeshType, url?: string }[] = [
     { label: 'Mushnub', type: 'gltf', url: 'process/public/opt/mushnub2-opt.glb' },
     { label: 'Wizard', type: 'gltf', url: 'process/public/opt/wizard3-opt.glb' },
     { label: 'Cthulhu', type: 'gltf', url: 'process/public/opt/cthulhu3-opt.glb' },
+    { label: 'Mug', type: 'gltf', url: 'process/public/opt/mug3-opt.glb' },
 ]
 
 export default function Buttons(props: {}) {
