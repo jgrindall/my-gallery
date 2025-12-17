@@ -17,6 +17,8 @@ import {
 } from '@gltf-transform/functions';
 import * as watlas from 'watlas';
 import { MeshoptEncoder } from 'meshoptimizer';
+import { draw } from './draw'
+
 
 await MeshoptEncoder.ready;
 
@@ -24,7 +26,9 @@ const getSimplification = (): {simplificationRatio:number, simplificationError:n
 	return { simplificationRatio: 0.2, simplificationError: 0.0005 };
 }
 
-const getWhiteTexture = (doc: Document, textureSize:number)=>{
+const TEXTURE_SIZE = 1024;
+
+const getWhiteTexture = (doc: Document, textureSize:number = TEXTURE_SIZE)=>{
 	const texture = doc.createTexture('WhitePaintingTexture')
 	.setMimeType('image/png')
 	.setImage(new Uint8Array(textureSize * textureSize * 4).fill(255)); // All white RGBA
@@ -46,7 +50,7 @@ export const optimizeGLTF = async (inputPath: string, outputPath: string) => {
 		outputPath = outputPath.replace('.gltf', '.glb');
 	}
 
-	// Remove animations, not relevant
+	// remove animations, not relevant
 	const animations = document.getRoot().listAnimations();
 	for (const animation of animations) {
 		animation.dispose();
@@ -54,7 +58,7 @@ export const optimizeGLTF = async (inputPath: string, outputPath: string) => {
 
 	const transforms = [];
 
-	// Custom transform to remove skinning/bones and convert to regular meshes
+	// remove skins.
 	const removeSkinning = () => {
 		return (doc:Document) => {
 			doc.getRoot().listNodes().forEach(node => {
@@ -64,14 +68,13 @@ export const optimizeGLTF = async (inputPath: string, outputPath: string) => {
 				}
 			});
 
-			// Remove all skins and their associated accessors
 			doc.getRoot().listSkins().forEach(skin => {
 				skin.dispose();
 			});
 		};
 	};
 
-	// Custom transform to clear existing UVs so unwrap can regenerate them
+	// remove uvs
 	const clearUVs = () => {
 		return (doc:Document) => {
 			doc.getRoot().listMeshes().forEach(mesh => {
@@ -85,9 +88,7 @@ export const optimizeGLTF = async (inputPath: string, outputPath: string) => {
 		};
 	};
 
-	// Add standard optimization transforms
 	transforms.push(
-		// Remove skinning first - makes everything a regular mesh
 		removeSkinning(),
 
 		dedup(),
@@ -113,15 +114,53 @@ export const optimizeGLTF = async (inputPath: string, outputPath: string) => {
 
 		join(),
 
+		// important one - generates uvs
 		unwrap({
-			watlas,
+			watlas: {
+				Initialize: watlas.Initialize,
+				Atlas: class extends watlas.Atlas {
+					computeCharts(options: any) {
+						super.computeCharts({
+							maxIterations: 5,
+							normalDeviationWeight: 2,
+							roundnessWeight: 0.01,
+							straightnessWeight: 6,
+							normalSeamWeight: 4,
+							textureSeamWeight: 0.5,
+							maxCost: 2,
+							maxChartArea: 0,
+							maxBoundaryLength: 0,
+							useInputMeshUvs: false,
+							fixWinding: false,
+							...options
+						});
+					}
+					generate(chartOptions: any, packOptions: any) {
+						super.generate({
+							maxIterations: 5,
+							normalDeviationWeight: 2,
+							roundnessWeight: 0.01,
+							straightnessWeight: 6,
+							normalSeamWeight: 4,
+							textureSeamWeight: 0.5,
+							maxCost: 2,
+							maxChartArea: 0,
+							maxBoundaryLength: 0,
+							useInputMeshUvs: false,
+							fixWinding: false,
+							...chartOptions
+						}, {
+							padding: 15,
+							...packOptions
+						});
+					}
+				}
+			} as any,
 		}),
 
 		(doc:Document) => {
-			// Create a larger texture for better resolution and padding effectiveness
-			const textureSize = 512;
-
-			const texture = getWhiteTexture(doc, textureSize);
+			// create a largeish texture
+			const texture = getWhiteTexture(doc);
 
 			const materials = doc.getRoot().listMaterials()
 			
@@ -153,6 +192,8 @@ export const optimizeGLTF = async (inputPath: string, outputPath: string) => {
 	);
 
 	outputPath = outputPath.replace('.', '-opt.').toLowerCase();
+
+	draw(document, outputPath);
 
 	await io.write(outputPath, document);
 }
